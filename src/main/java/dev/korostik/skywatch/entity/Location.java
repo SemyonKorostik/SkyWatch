@@ -1,13 +1,19 @@
 package dev.korostik.skywatch.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "Location")
 public class Location {
@@ -18,16 +24,15 @@ public class Location {
     private Long id;
 
     @Column(name = "latitude", nullable = false, precision = 10, scale = 8)
-    private BigDecimal latitude;
+    private Float latitude;
 
     @Column(name = "longitude", nullable = false, precision = 11, scale = 8)
-    private BigDecimal longitude;
+    private Float longitude;
 
-//    private Address address;
-
-    /*добавить поля для адреса и обернуть в объект для читабельности*/
+    @Embedded
+    private Address address;
 
     @Column(name = "time_zone_offset", nullable = false)
-    private Short timeZoneOffset;
+    private Integer timeZoneOffset;
 
 }

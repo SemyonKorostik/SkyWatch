@@ -5,10 +5,10 @@ import dev.korostik.skywatch.entity.Location;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper
+@Mapper(componentModel = "spring", uses = {AddressMapper.class})
 public interface LocationMapper {
 
-/*    @Mapping(target = "timeZoneOffset", source = "timeZone.gmtOffset")
-    @Mapping(target = "address", source = "timeZone.gmtOffset")
-    Location mapToEntity(GeoNameDto dto);*/
+    @Mapping(target = "timeZoneOffset", source = "timeZone.gmtOffset")
+    Location mapToEntity(GeoNameDto dto);
+
 }

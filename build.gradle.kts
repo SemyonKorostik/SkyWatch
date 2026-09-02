@@ -1,5 +1,6 @@
 plugins {
-    java
+//    java
+    kotlin("jvm") version "2.4.0"
     id("org.springframework.boot") version "4.1.0"
     id("io.spring.dependency-management") version "1.1.7"
 }
@@ -8,11 +9,11 @@ group = "dev.korostik"
 version = "0.0.1-SNAPSHOT"
 description = "SkyWatch"
 
-java {
+/*java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
-}
+}*/
 
 
 

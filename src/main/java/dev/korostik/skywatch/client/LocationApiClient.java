@@ -8,11 +8,11 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-//@FeignClient(name = "locationApi", url = "http://api.geonames.org")
+@FeignClient(name = "locationApi", url = "http://api.geonames.org")
 public interface LocationApiClient {
-    @GetMapping("/findNearbyPlaceNameJSON?")
-    GeonamesResponse getLocation(@RequestParam("lat") String latitude,
-                                 @RequestParam("lng") String longitude,
+    @GetMapping("/findNearbyPlaceNameJSON")
+    GeonamesResponse getLocation(@RequestParam("lat") Float latitude,
+                                 @RequestParam("lng") Float longitude,
                                  @RequestParam("lang") Language language,
                                  @RequestParam("localCountry") Boolean insideBoundary,
                                  @RequestParam GeoNamesStyle style,

@@ -6,5 +6,5 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record GeonamesResponse(@JsonProperty("geonames") List<GeoNameDto> geonames) {
+public record GeonamesResponse<T>(@JsonProperty("geonames") T geonames) {
 }
