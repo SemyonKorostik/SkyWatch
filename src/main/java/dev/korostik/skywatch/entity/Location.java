@@ -23,10 +23,10 @@ public class Location {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "latitude", nullable = false, precision = 10, scale = 8)
+    @Column(name = "latitude", nullable = false)
     private Float latitude;
 
-    @Column(name = "longitude", nullable = false, precision = 11, scale = 8)
+    @Column(name = "longitude", nullable = false)
     private Float longitude;
 
     @Embedded

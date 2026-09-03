@@ -35,10 +35,10 @@ public class StartCommandHandler implements CommandUpdateHandler {
             sendMessage.setReplyMarkup(keyboardMenu.getLocationReplyMarkup());
             executor.execute(sendMessage);
         } else {
-            executor.execute(
-                new SendMessage(Updates.chatId(update),
-                    update.message().from().firstName() + ", we have already started ")
-            );
+            SendMessage sendMessage = new SendMessage(Updates.chatId(update), update.message().from().firstName() + ", we have already started ");
+            sendMessage.setReplyMarkup(keyboardMenu.getForecastReplyMarkup());
+            executor.execute(sendMessage);
+
         }
     }
 

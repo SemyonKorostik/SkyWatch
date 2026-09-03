@@ -24,17 +24,18 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("io.github.ksilisk:telegram-bot-spring-boot-starter:0.7.0")
     runtimeOnly("org.postgresql:postgresql:42.7.11")
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:5.0.2")
+    implementation("org.projectlombok:lombok:1.18.46")
+    annotationProcessor("org.projectlombok:lombok:1.18.46")
+    implementation("org.projectlombok:lombok-mapstruct-binding:0.2.0")
     implementation("org.mapstruct:mapstruct:1.6.3")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
-    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:5.0.2")
-    compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    annotationProcessor("org.projectlombok:lombok")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testCompileOnly("org.projectlombok:lombok")
+    testCompileOnly("org.projectlombok:lombok:1.18.46")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testAnnotationProcessor("org.projectlombok:lombok")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.46")
 }
 
 tasks.withType<Test> {

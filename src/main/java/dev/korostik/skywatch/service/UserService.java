@@ -2,6 +2,7 @@ package dev.korostik.skywatch.service;
 
 import dev.korostik.skywatch.entity.User;
 import dev.korostik.skywatch.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ public class UserService {
     return userRepository.getByChatId(chatId);
   }
 
+  @Transactional
   public User save(User user) {
     return userRepository.save(user);
   }

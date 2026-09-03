@@ -5,6 +5,7 @@ import dev.korostik.skywatch.dto.geonames.GeonamesResponse;
 import dev.korostik.skywatch.entity.Location;
 import dev.korostik.skywatch.enums.Language;
 import dev.korostik.skywatch.mapper.LocationMapper;
+
 import java.util.Collection;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,5 @@ public class LocationService {
             .findFirst()
             .orElseThrow());
   }
-
 
 }

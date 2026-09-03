@@ -8,7 +8,10 @@ spring:
     password: ${DB_PASSWORD:postgres}
 geonames:
   username: semyon610
-  style: SHORT
+  style: FULL
+  inside-boundary: TRUE
+  geo-name-source: cities500
+  max-rows: 1
 open-meteo:
   api-key: ${OPEN_METEO_API_KEY}
 telegram:

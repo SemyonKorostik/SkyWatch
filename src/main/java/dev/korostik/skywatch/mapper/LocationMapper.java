@@ -8,7 +8,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {AddressMapper.class})
 public interface LocationMapper {
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "timeZoneOffset", source = "timeZone.gmtOffset")
+    @Mapping(target = "address", source = ".")
     Location mapToEntity(GeoNameDto dto);
 
 }

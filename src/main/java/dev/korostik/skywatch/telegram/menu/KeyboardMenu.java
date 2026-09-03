@@ -20,7 +20,7 @@ public class KeyboardMenu {
 
   @PostConstruct
   public void init() {
-    locationButton = new KeyboardButton("Share location");
+    locationButton = new KeyboardButton("Share location").requestLocation(true);
     dailyForecastButton = new KeyboardButton("Daily Forecast");
     hourlyForecastButton = new KeyboardButton("Hourly Forecast");
     weeklyForecastButton = new KeyboardButton("Weekly Forecast");

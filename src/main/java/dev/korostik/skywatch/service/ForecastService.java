@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class ForecastService {
   private final OpenWeatherApiClientProxy openWeatherApiClientProxy;
 
-  public Weather getForecast(Location location, Set<ForecastType> forecastTypes) {
+/*  public Weather getForecast(Location location, Set<ForecastType> forecastTypes) {
   }
 
   public Weather getHourlyForecast(Location location) {
@@ -22,6 +22,6 @@ public class ForecastService {
 
   public Weather getDailyForecast(Location location) {
 
-  }
+  }*/
 
 }
