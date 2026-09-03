@@ -3,6 +3,7 @@ package dev.korostik.skywatch.telegram.menu;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,6 +13,10 @@ public class KeyboardMenu {
   private KeyboardButton dailyForecastButton;
   private KeyboardButton hourlyForecastButton;
   private KeyboardButton weeklyForecastButton;
+  @Getter
+  private ReplyKeyboardMarkup locationReplyMarkup;
+  @Getter
+  private ReplyKeyboardMarkup forecastReplyMarkup;
 
   @PostConstruct
   public void init() {
@@ -19,14 +24,8 @@ public class KeyboardMenu {
     dailyForecastButton = new KeyboardButton("Daily Forecast");
     hourlyForecastButton = new KeyboardButton("Hourly Forecast");
     weeklyForecastButton = new KeyboardButton("Weekly Forecast");
-  }
-
-  public ReplyKeyboardMarkup getLocationMenu() {
-    return new ReplyKeyboardMarkup(locationButton);
-  }
-
-  public ReplyKeyboardMarkup getFullMenu() {
-    return new ReplyKeyboardMarkup(dailyForecastButton, hourlyForecastButton, weeklyForecastButton,
-        locationButton);
+    locationReplyMarkup = new ReplyKeyboardMarkup(locationButton);
+    forecastReplyMarkup = new ReplyKeyboardMarkup(dailyForecastButton, hourlyForecastButton,
+        weeklyForecastButton, locationButton).resizeKeyboard(true);
   }
 }

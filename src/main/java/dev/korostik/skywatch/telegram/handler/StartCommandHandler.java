@@ -1,11 +1,8 @@
 package dev.korostik.skywatch.telegram.handler;
 
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.KeyboardButton;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import dev.korostik.skywatch.entity.User;
-import dev.korostik.skywatch.repository.UserRepository;
 import dev.korostik.skywatch.service.UserService;
 import dev.korostik.skywatch.telegram.menu.KeyboardMenu;
 import io.ksilisk.telegrambot.core.executor.TelegramBotExecutor;
@@ -35,7 +32,7 @@ public class StartCommandHandler implements CommandUpdateHandler {
                 .build());
             SendMessage sendMessage = new SendMessage(user.getChatId(),
                 "Hello, " + update.message().from().firstName() + "\nPlease, allow access to location data");
-            sendMessage.setReplyMarkup(keyboardMenu.getLocationMenu());
+            sendMessage.setReplyMarkup(keyboardMenu.getLocationReplyMarkup());
             executor.execute(sendMessage);
         } else {
             executor.execute(

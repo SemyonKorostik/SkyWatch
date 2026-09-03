@@ -15,8 +15,6 @@ description = "SkyWatch"
     }
 }*/
 
-
-
 repositories {
     mavenCentral()
 }

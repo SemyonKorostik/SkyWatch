@@ -9,6 +9,8 @@ spring:
 geonames:
   username: semyon610
   style: SHORT
+open-meteo:
+  api-key: ${OPEN_METEO_API_KEY}
 telegram:
   bot:
     url: https://api.telegram.org/bot
