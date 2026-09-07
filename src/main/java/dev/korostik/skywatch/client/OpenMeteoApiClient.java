@@ -3,6 +3,7 @@ package dev.korostik.skywatch.client;
 import dev.korostik.skywatch.dto.weather.ForecastRequest;
 import dev.korostik.skywatch.dto.weather.ForecastResponse;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -11,9 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
  * https://api.open-meteo.com/v1/forecast?latitude=53.9&longitude=27.55&current=temperature_2m,relative_humidity_2m,weather_code,apparent_temperature,wind_speed_10m,wind_direction_10m,surface_pressure&timezone=Europe%2FMoscow
  */
 
-@FeignClient(name = "openWeatherApi", url = "http://api.open-meteo.com")
-public interface OpenWeatherApiClient {
+@FeignClient(name = "openMeteoApi", url = "http://api.open-meteo.com")
+public interface OpenMeteoApiClient {
 
   @GetMapping("/v1/forecast")
-  ForecastResponse getForecast(ForecastRequest forecastRequest);
+  ForecastResponse getForecast(@SpringQueryMap ForecastRequest forecastRequest);
 }

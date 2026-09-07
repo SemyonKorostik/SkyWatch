@@ -2,10 +2,13 @@ package dev.korostik.skywatch.telegram.interceptor;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import dev.korostik.skywatch.entity.DailyWeather;
 import dev.korostik.skywatch.entity.User;
 import dev.korostik.skywatch.enums.Language;
+import dev.korostik.skywatch.service.ForecastService;
 import dev.korostik.skywatch.service.LocationService;
 import dev.korostik.skywatch.service.UserService;
+import dev.korostik.skywatch.service.WeatherConditionService;
 import dev.korostik.skywatch.telegram.button.ButtonTypes;
 import dev.korostik.skywatch.telegram.menu.KeyboardMenu;
 import io.ksilisk.telegrambot.core.executor.TelegramBotExecutor;
@@ -23,6 +26,7 @@ public class ButtonsInterceptor implements UpdateInterceptor {
 
   private final UserService userService;
   private final LocationService locationService;
+  private final ForecastService forecastService;
   private final TelegramBotExecutor executor;
   private final KeyboardMenu keyboardMenu;
 
@@ -37,14 +41,9 @@ public class ButtonsInterceptor implements UpdateInterceptor {
     }
     switch (ButtonTypes.from(update.message().text())) {
       case DAILY_FORECAST:
-        executor.execute(new SendMessage(Updates.chatId(update), """
-                🌡️ Current: 19°C (feels like 17°C)
-                ☁️ Conditions: partly cloudy
-                💧 Humidity: 65%
-                💨 Wind: 5.2 m/s
-                🌅 Sunrise: 06:23
-                🌇 Sunset: 20:15
-                """));
+        Iterable<DailyWeather> dailyForecast = forecastService.getDailyForecast(userService.getByChatId(update.message().chat().id()).getLocation(), 1);
+        DailyWeather next = dailyForecast.iterator().next();
+        executor.execute(new SendMessage(Updates.chatId(update), next.toString()));
         break;
       case WEEKLY_FORECAST:
         executor.execute(new SendMessage(Updates.chatId(update), """

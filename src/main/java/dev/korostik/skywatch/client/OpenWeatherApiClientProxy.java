@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OpenWeatherApiClientProxy {
 
-  private final OpenWeatherApiClient openWeatherApiClient;
+  private final OpenMeteoApiClient openMeteoApiClient;
 
   public ForecastResponse getForecast(ForecastRequest request) {
-    return openWeatherApiClient.getForecast(request);
+    return openMeteoApiClient.getForecast(request);
   }
 }
