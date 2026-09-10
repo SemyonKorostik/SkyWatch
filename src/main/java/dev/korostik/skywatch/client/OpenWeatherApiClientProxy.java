@@ -12,6 +12,9 @@ public class OpenWeatherApiClientProxy {
   private final OpenMeteoApiClient openMeteoApiClient;
 
   public ForecastResponse getForecast(ForecastRequest request) {
-    return openMeteoApiClient.getForecast(request);
+    System.out.println(openMeteoApiClient.getForecast2(request.latitude(),
+            request.longitude(), request.hourly(), request.daily(), request.current(), request.timezone(), request.forecastDays()));
+    return openMeteoApiClient.getForecast(request.latitude(),
+            request.longitude(), request.hourly(), request.daily(), request.current(), request.timezone(), request.forecastDays());
   }
 }

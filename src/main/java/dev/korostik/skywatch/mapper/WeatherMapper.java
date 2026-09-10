@@ -27,8 +27,7 @@ public class WeatherMapper {
                         .date(dto.daily().time().get(i))
                         .temperatureMax(dto.daily().temperature2mMax().get(i))
                         .temperatureMin(dto.daily().temperature2mMin().get(i))
-                        .weatherCondition(weatherConditionService.getByCode(dto.daily().weatherCode().get(i)
-                                .shortValue()))
+                        .weatherCondition(weatherConditionService.getByCode("open-meteo", dto.daily().weatherCode().get(i)))
                         .location(locationService.getLocation(dto.latitude(), dto.longitude()))
                         .build())
                 .collect(Collectors.toList());

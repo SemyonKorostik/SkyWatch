@@ -7,7 +7,6 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 
@@ -16,12 +15,16 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Entity
 @Table(name = "daily_weather")
 public class DailyWeather {
     @Id
-    @ColumnDefault("nextval('daily_weather_id_seq')")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "daily_weather_seq")
+    @SequenceGenerator(
+            name = "daily_weather_seq",
+            sequenceName = "daily_weather_id_seq",
+            allocationSize = 1
+    )
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -57,4 +60,8 @@ public class DailyWeather {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" + "id = " + id + ", " + "date = " + date + ", " + "temperatureMax = " + temperatureMax + ", " + "temperatureMin = " + temperatureMin + ", " + "createdAt = " + createdAt + ", " + "updatedAt = " + updatedAt + ")";
+    }
 }

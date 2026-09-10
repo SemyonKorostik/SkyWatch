@@ -11,6 +11,7 @@ import java.util.Set;
 
 import dev.korostik.skywatch.mapper.WeatherMapper;
 import dev.korostik.skywatch.repository.DailyWeatherRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +26,14 @@ public class ForecastService {
 //
 //  }
 
+  @Transactional
   public Iterable<DailyWeather> getDailyForecast(Location location, int numberOfDays) {
     return dailyWeatherRepository.saveAll(weatherMapper.toEntity(
             openWeatherApiClientProxy.getForecast(
                     ForecastRequest.builder()
                             .latitude(Double.valueOf(location.getLatitude()))
                             .longitude(Double.valueOf(location.getLongitude()))
-                            .forecastDays(numberOfDays)
+                            .forecastDays(1)
                             .timezone("Europe/Moscow")
                             .daily(List.of("temperature_2m_max",
                                     "temperature_2m_min",

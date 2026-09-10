@@ -1,9 +1,11 @@
 package dev.korostik.skywatch.dto.weather;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import feign.Param;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record ForecastResponse(
     @JsonProperty("latitude") Float latitude,
     @JsonProperty("longitude") Float longitude,

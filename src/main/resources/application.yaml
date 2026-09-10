@@ -6,6 +6,19 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
+  cloud:
+    openfeign:
+      client:
+        config:
+          # Use 'default' to apply to ALL Feign clients
+          default:
+            loggerLevel: FULL
+logging:
+  level:
+    feign: DEBUG
+    org.springframework.cloud.openfeign: DEBUG
+    # Option A: Enable debugging for a specific client interface
+    dev.korostik.skywatch.client.OpenWeatherApiClientProxy: DEBUG
 geonames:
   username: semyon610
   style: FULL
@@ -19,5 +32,6 @@ telegram:
     url: https://api.telegram.org/bot
     token: ${TELEGRAM_BOT_TOKEN}
     auth-url: ${telegram.bot.url}${telegram.bot.token}
+
 
 

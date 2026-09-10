@@ -22,8 +22,9 @@ public class LocationService {
   private final LocationRepository locationRepository;
 
   public Location getLocation(Float latitude, Float longitude) {
-    return locationRepository.findByLatitudeAndLongitude(latitude, longitude)
-            .orElseThrow();
+    return locationRepository.findById(5l).orElseThrow();
+//    return locationRepository.findByLatitudeAndLongitude(latitude, longitude)
+//            .orElseThrow();
   }
 
 

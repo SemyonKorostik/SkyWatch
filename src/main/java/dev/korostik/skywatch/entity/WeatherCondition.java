@@ -12,7 +12,6 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "weather_conditions")
 public class WeatherCondition {
@@ -23,22 +22,18 @@ public class WeatherCondition {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "wmo_code", nullable = false, referencedColumnName = "code")
+    private WmoWeatherCode wmoCode;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "weather_provider_name", nullable = false)
-    private WeatherProvider weatherProviderName;
+    @JoinColumn(name = "provider_name", nullable = false)
+    private WeatherProvider providerName;
 
+    @Size(max = 10)
     @NotNull
-    @Column(name = "code", nullable = false)
-    private Short code;
-
-    @Size(max = 100)
-    @NotNull
-    @Column(name = "description", nullable = false, length = 100)
-    private String description;
-
-    @Size(max = 50)
-    @NotNull
-    @Column(name = "icon_name", nullable = false, length = 50)
-    private String iconName;
+    @Column(name = "provider_code", nullable = false, length = 10)
+    private String providerCode;
 
 }
