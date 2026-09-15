@@ -7,8 +7,8 @@ import feign.Param;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record ForecastResponse(
-    @JsonProperty("latitude") Float latitude,
-    @JsonProperty("longitude") Float longitude,
+    @JsonProperty("latitude") Double latitude,
+    @JsonProperty("longitude") Double longitude,
     @JsonProperty("generationtime_ms") Long generationTimeMs,
     @JsonProperty("utc_offset_seconds") Integer utcOffsetSeconds,
     @JsonProperty("timezone") String timezone,

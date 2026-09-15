@@ -30,7 +30,7 @@ public class LocationApiClientProxy {
 
     private final LocationApiClient locationApiClient;
 
-    public GeonamesResponse<List<GeoNameDto>> getLocation(Float latitude, Float longitude, Language language) {
+    public GeonamesResponse<List<GeoNameDto>> getLocation(Double latitude, Double longitude, Language language) {
         GeonamesResponse<List<GeoNameDto>> location = locationApiClient.getLocation(latitude, longitude, language, insideBoundary, style, geoNamesSource, maxRowsCount, userName);
         log.info(location.toString());
         return location;

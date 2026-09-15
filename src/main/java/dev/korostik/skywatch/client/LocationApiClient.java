@@ -15,8 +15,8 @@ import java.util.List;
 @FeignClient(name = "locationApi", url = "http://api.geonames.org")
 public interface LocationApiClient {
     @GetMapping("/findNearbyPlaceNameJSON")
-    GeonamesResponse<List<GeoNameDto>> getLocation(@RequestParam("lat") Float latitude,
-                                                   @RequestParam("lng") Float longitude,
+    GeonamesResponse<List<GeoNameDto>> getLocation(@RequestParam("lat") Double latitude,
+                                                   @RequestParam("lng") Double longitude,
                                                    @RequestParam("lang") Language language,
                                                    @RequestParam("localCountry") Boolean insideBoundary,
                                                    @RequestParam GeoNamesStyle style,

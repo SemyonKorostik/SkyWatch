@@ -11,5 +11,5 @@ public interface LocationRepository extends CrudRepository<Location, Long> {
 
     boolean existsByLatitudeAndLongitude(Float latitude, Float longitude);
 
-    Optional<Location> findByLatitudeAndLongitude(Float latitude, Float longitude);
+    Optional<Location> findByLatitudeAndLongitude(Double latitude, Double longitude);
 }

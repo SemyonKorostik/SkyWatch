@@ -3,8 +3,6 @@ package dev.korostik.skywatch.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @Builder
@@ -21,15 +19,15 @@ public class Location {
     private Long id;
 
     @Column(name = "latitude", nullable = false)
-    private Float latitude;
+    private Double latitude;
 
     @Column(name = "longitude", nullable = false)
-    private Float longitude;
+    private Double longitude;
 
     @Embedded
     private Address address;
 
-    @Column(name = "time_zone_offset", nullable = false)
-    private Integer timeZoneOffset;
+    @Column(name = "time_zone_id", nullable = false)
+    private String timeZoneId;
 
 }

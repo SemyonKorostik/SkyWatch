@@ -4,6 +4,7 @@ import dev.korostik.skywatch.dto.weather.ForecastRequest;
 import dev.korostik.skywatch.dto.weather.ForecastResponse;
 import feign.Param;
 import feign.RequestLine;
+import java.util.Set;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,7 @@ public interface OpenMeteoApiClient {
           @RequestParam("latitude") Double latitude,
           @RequestParam("longitude") Double longitude,
           @RequestParam(value = "hourly", required = false) List<String> hourly,
-          @RequestParam(value = "daily", required = false) List<String> daily,
+          @RequestParam(value = "daily", required = false) Set<String> daily,
           @RequestParam(value = "current", required = false) List<String> current,
           @RequestParam(value = "timezone", required = false) String timezone,
           @RequestParam(value = "forecast_days", required = false) Integer forecastDays
