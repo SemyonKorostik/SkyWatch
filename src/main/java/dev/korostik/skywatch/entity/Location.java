@@ -30,4 +30,6 @@ public class Location {
     @Column(name = "time_zone_id", nullable = false)
     private String timeZoneId;
 
+    @Column(name = "geom", nullable = false)
+    private Point geom;
 }
