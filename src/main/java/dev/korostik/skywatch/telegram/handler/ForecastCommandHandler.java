@@ -1,7 +1,5 @@
 package dev.korostik.skywatch.telegram.handler;
 
-import static dev.korostik.skywatch.telegram.button.ButtonTypes.DAILY_FORECAST;
-
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import dev.korostik.skywatch.telegram.button.ButtonTypes;
@@ -28,7 +26,7 @@ public class ForecastCommandHandler implements CommandUpdateHandler {
   @Override
   public void handle(Update update) {
     switch (ButtonTypes.valueOf(update.message().text())) {
-      case DAILY_FORECAST:
+      case ONE_DAY_FORECAST:
         executor.execute(new SendMessage(Updates.chatId(update), """
                 🌡️ Current: 19°C (feels like 17°C)
                 ☁️ Conditions: partly cloudy
@@ -38,7 +36,7 @@ public class ForecastCommandHandler implements CommandUpdateHandler {
                 🌇 Sunset: 20:15
                 """));
         break;
-      case WEEKLY_FORECAST:
+      case CURRENT_FORECAST:
         executor.execute(new SendMessage(Updates.chatId(update), """
                 Monday (15/04): ☁️ 19°C, scattered clouds
                 Tuesday (16/04): 🌧️ 16°C, light rain

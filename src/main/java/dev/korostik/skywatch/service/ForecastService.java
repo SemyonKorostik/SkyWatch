@@ -1,30 +1,35 @@
 package dev.korostik.skywatch.service;
 
+import com.pengrad.telegrambot.request.SendMessage;
 import dev.korostik.skywatch.client.OpenWeatherApiClientProxy;
 import dev.korostik.skywatch.dto.weather.ForecastRequest;
 import dev.korostik.skywatch.entity.DailyWeather;
 import dev.korostik.skywatch.entity.Location;
+import dev.korostik.skywatch.entity.WeatherCondition;
 import dev.korostik.skywatch.enums.OpenWeatherParameters;
-import dev.korostik.skywatch.mapper.WeatherMapper;
+import dev.korostik.skywatch.mapper.DailyWeatherMapper;
 import dev.korostik.skywatch.repository.DailyWeatherRepository;
-import jakarta.transaction.Transactional;
+import io.ksilisk.telegrambot.core.executor.TelegramBotExecutor;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class ForecastService {
 
   private final OpenWeatherApiClientProxy openWeatherApiClientProxy;
-  private final WeatherMapper weatherMapper;
+  private final DailyWeatherMapper weatherMapper;
   private final DailyWeatherRepository dailyWeatherRepository;
-
-//  public HourlyWeather getHourlyForecast(Location location) {
-//
-//  }
+  private final Map<String, WeatherCondition> weatherConditionOpenMeteoDictionary;
+  private final UserService userService;
+  private final TelegramBotExecutor executor;
 
   @Transactional
-  public Iterable<DailyWeather> getDailyForecast(Location location, int numberOfDays) {
+  public List<DailyWeather> fetchAndSaveDailyForecast(Location location,
+      OpenWeatherParameters parameters, int numberOfDays) {
     return dailyWeatherRepository.saveAll(weatherMapper.toEntity(
         openWeatherApiClientProxy.getForecast(
             ForecastRequest.builder()
@@ -32,9 +37,32 @@ public class ForecastService {
                 .longitude(location.getLongitude())
                 .forecastDays(numberOfDays)
                 .timezone(location.getTimeZoneId())
-                .daily(OpenWeatherParameters.DAILY.getParameters())
+                .daily(parameters.getParameters())
                 .build()
-        )));
+        ), location, weatherConditionOpenMeteoDictionary));
   }
 
+  @Transactional
+  public void sendDailyForecast(Long chatId, int numberOfDays) {
+    Location location = userService.getByChatId(chatId).getLocation();
+    List<DailyWeather> forecast = fetchAndSaveDailyForecast(location, OpenWeatherParameters.DAILY,
+        numberOfDays);
+    executor.execute(new SendMessage(chatId, forecast.toString()));
+  }
+
+  @Transactional
+  public void sendCurrentForecast(Long chatId) {
+    Location location = userService.getByChatId(chatId).getLocation();
+    List<DailyWeather> forecast = fetchAndSaveDailyForecast(location, OpenWeatherParameters.CURRENT,
+        1);
+    executor.execute(new SendMessage(chatId, forecast.toString()));
+  }
+
+  @Transactional
+  public void sendHourlyForecast(Long chatId) {
+    Location location = userService.getByChatId(chatId).getLocation();
+    List<DailyWeather> forecast = fetchAndSaveDailyForecast(location, OpenWeatherParameters.HOURLY,
+        1);
+    executor.execute(new SendMessage(chatId, forecast.toString()));
+  }
 }

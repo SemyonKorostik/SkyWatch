@@ -19,19 +19,23 @@ logging:
     org.springframework.cloud.openfeign: DEBUG
     # Option A: Enable debugging for a specific client interface
     dev.korostik.skywatch.client.OpenWeatherApiClientProxy: DEBUG
-geonames:
-  username: semyon610
-  style: FULL
-  inside-boundary: TRUE
-  geo-name-source: cities500
-  max-rows: 1
-open-meteo:
-  api-key: ${OPEN_METEO_API_KEY}
+app:
+  geonames:
+    username: semyon610
+    style: FULL
+    inside-boundary: TRUE
+    geo-name-source: cities500
+    max-rows: 1
+  location:
+    search-radius-meters: 5000
+    language: en
+#  open-meteo:
+#    api-key: ${OPEN_METEO_API_KEY}
 telegram:
   bot:
-    url: https://api.telegram.org/bot
+#    url: https://api.telegram.org/bot
     token: ${TELEGRAM_BOT_TOKEN}
-    auth-url: ${telegram.bot.url}${telegram.bot.token}
+#    auth-url: ${telegram.bot.url}${telegram.bot.token}
 
 
 

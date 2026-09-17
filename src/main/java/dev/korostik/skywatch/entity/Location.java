@@ -2,6 +2,7 @@ package dev.korostik.skywatch.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.geo.Point;
 
 @Getter
 @Setter
