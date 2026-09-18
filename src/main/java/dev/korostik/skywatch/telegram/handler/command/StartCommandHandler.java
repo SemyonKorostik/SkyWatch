@@ -1,4 +1,4 @@
-package dev.korostik.skywatch.telegram.handler;
+package dev.korostik.skywatch.telegram.handler.command;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -36,7 +36,7 @@ public class StartCommandHandler implements CommandUpdateHandler {
             executor.execute(sendMessage);
         } else {
             SendMessage sendMessage = new SendMessage(Updates.chatId(update), update.message().from().firstName() + ", we have already started ");
-            sendMessage.setReplyMarkup(keyboardMenu.getForecastReplyMarkup());
+            sendMessage.setReplyMarkup(keyboardMenu. getForecastReplyMarkup());
             executor.execute(sendMessage);
 
         }

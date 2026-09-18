@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ForecastService {
-
+//использовать Прокси для получения запроса от разных поставщиков
   private final OpenWeatherApiClientProxy openWeatherApiClientProxy;
   private final DailyWeatherMapper weatherMapper;
   private final DailyWeatherRepository dailyWeatherRepository;
