@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static dev.korostik.skywatch.enums.OpenWeatherParameters.*;
+
 @Service
 @RequiredArgsConstructor
 public class ForecastService {
@@ -37,7 +39,9 @@ public class ForecastService {
                 .longitude(location.getLongitude())
                 .forecastDays(numberOfDays)
                 .timezone(location.getTimeZoneId())
-                .daily(parameters.getParameters())
+                .current(CURRENT == parameters ? parameters.getParameters() : null)
+                .hourly(HOURLY == parameters ? parameters.getParameters() : null)
+                .daily(DAILY == parameters ? parameters.getParameters() : null)
                 .build()
         ), location, weatherConditionOpenMeteoDictionary));
   }
@@ -53,7 +57,7 @@ public class ForecastService {
   @Transactional
   public void sendCurrentForecast(Long chatId) {
     Location location = userService.getByChatId(chatId).getLocation();
-    List<DailyWeather> forecast = fetchAndSaveDailyForecast(location, OpenWeatherParameters.CURRENT,
+    List<DailyWeather> forecast = fetchAndSaveDailyForecast(location, CURRENT,
         1);
     executor.execute(new SendMessage(chatId, forecast.toString()));
   }

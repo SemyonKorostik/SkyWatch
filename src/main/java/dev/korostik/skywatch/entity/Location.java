@@ -2,7 +2,6 @@ package dev.korostik.skywatch.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.geo.Point;
 
 @Getter
 @Setter
@@ -31,6 +30,4 @@ public class Location {
     @Column(name = "time_zone_id", nullable = false)
     private String timeZoneId;
 
-    @Column(name = "geom", nullable = false)
-    private Point geom;
 }
