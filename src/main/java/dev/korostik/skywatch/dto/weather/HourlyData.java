@@ -10,5 +10,8 @@ public record HourlyData (
     @JsonProperty("weather_code") List<Integer> weatherCode,
     @JsonProperty("apparent_temperature") List<Double> apparentTemperature,
     @JsonProperty("precipitation") List<Double> precipitation,
-    @JsonProperty("precipitation_probability") List<Integer> precipitationProbability
+    @JsonProperty("precipitation_probability") List<Integer> precipitationProbability,
+    @JsonProperty("wind_speed_10m") Double windSpeed10m,
+    @JsonProperty("wind_direction_10m") Integer windDirection10m,
+    @JsonProperty("surface_pressure") Double surfacePressure
 ) {}
