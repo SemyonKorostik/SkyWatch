@@ -39,26 +39,26 @@ public class HourlyWeather {
 
     @NotNull
     @Column(name = "temperature", nullable = false, precision = 4, scale = 1)
-    private BigDecimal temperature;
+    private Double temperature;
 
     @NotNull
     @Column(name = "humidity", nullable = false)
-    private Short humidity;
+    private Integer humidity;
 
     @Column(name = "precipitation", precision = 5, scale = 2)
-    private BigDecimal precipitation;
+    private Double precipitation;
 
     @Column(name = "precipitation_probability")
-    private Short precipitationProbability;
+    private Integer precipitationProbability;
 
     @Column(name = "wind_speed", precision = 5, scale = 2)
-    private BigDecimal windSpeed;
+    private Double windSpeed;
 
     @Column(name = "wind_direction")
-    private Short windDirection;
+    private Integer windDirection;
 
     @Column(name = "pressure", precision = 6, scale = 2)
-    private BigDecimal pressure;
+    private Double pressure;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

@@ -1,34 +1,34 @@
 package dev.korostik.skywatch.mapper;
 
+import dev.korostik.skywatch.dto.weather.DailyData;
 import dev.korostik.skywatch.dto.weather.ForecastResponse;
 import dev.korostik.skywatch.entity.DailyWeather;
 import dev.korostik.skywatch.entity.Location;
 import dev.korostik.skywatch.entity.WeatherCondition;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 
-//@Mapper(componentModel = "spring")
-@RequiredArgsConstructor
-@Component
-public class DailyWeatherMapper {
+@Mapper(componentModel = "spring", uses = {HourlyWeatherMapper.class})
+public abstract class DailyWeatherMapper {
 
-  public List<DailyWeather> toEntity(ForecastResponse dto, Location location,
+  @Mapping(target = "date", source = "time")
+  @Mapping(target = "temperatureMax", source = "temperature2mMax")
+  @Mapping(target = "temperatureMin", source = "temperature2mMin")
+  @Mapping(target = "weatherCondition", expression = "java(weatherConditions.get(dto.weatherCode()))")
+  @Mapping(target = "location", source = "location")
+  protected abstract DailyWeather toEntityInternal(DailyData dto, Location location,
+      Map<String, WeatherCondition> weatherConditions);
+
+
+  public List<DailyWeather> toEntities(ForecastResponse dto, Location location,
       Map<String, WeatherCondition> weatherConditions) {
-    return IntStream.range(0, dto.daily().time().size())
-        .mapToObj(i -> DailyWeather.builder()
-            .createdAt(Instant.ofEpochMilli(dto.generationTimeMs()))
-            .date(dto.daily().time().get(i))
-            .temperatureMax(dto.daily().temperature2mMax().get(i))
-            .temperatureMin(dto.daily().temperature2mMin().get(i))
-            .weatherCondition(weatherConditions.get(dto.daily().weatherCode().get(i)))
-            .location(location)
-            .build())
-        .collect(Collectors.toList());
-  }
 
+    return dto.daily().stream()
+        .map(x -> toEntityInternal(x, location, weatherConditions))
+        .toList();
+  }
 }

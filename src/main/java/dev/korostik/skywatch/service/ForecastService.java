@@ -3,6 +3,7 @@ package dev.korostik.skywatch.service;
 import com.pengrad.telegrambot.request.SendMessage;
 import dev.korostik.skywatch.client.OpenWeatherApiClientProxy;
 import dev.korostik.skywatch.dto.weather.ForecastRequest;
+import dev.korostik.skywatch.dto.weather.ForecastResponse;
 import dev.korostik.skywatch.entity.DailyWeather;
 import dev.korostik.skywatch.entity.Location;
 import dev.korostik.skywatch.entity.WeatherCondition;
@@ -32,18 +33,19 @@ public class ForecastService {
   @Transactional
   public List<DailyWeather> fetchAndSaveDailyForecast(Location location,
       OpenWeatherParameters parameters, int numberOfDays) {
-    return dailyWeatherRepository.saveAll(weatherMapper.toEntity(
-        openWeatherApiClientProxy.getForecast(
-            ForecastRequest.builder()
-                .latitude(location.getLatitude())
-                .longitude(location.getLongitude())
-                .forecastDays(numberOfDays)
-                .timezone(location.getTimeZoneId())
-                .current(CURRENT == parameters ? parameters.getParameters() : null)
-                .hourly(HOURLY == parameters ? parameters.getParameters() : null)
-                .daily(DAILY == parameters ? parameters.getParameters() : null)
-                .build()
-        ), location, weatherConditionOpenMeteoDictionary));
+    ForecastResponse response = openWeatherApiClientProxy.getForecast(
+        ForecastRequest.builder()
+            .latitude(location.getLatitude())
+            .longitude(location.getLongitude())
+            .forecastDays(numberOfDays)
+            .timezone(location.getTimeZone().getId())
+            .current(CURRENT == parameters ? parameters.getParameters() : null)
+            .hourly(HOURLY == parameters ? parameters.getParameters() : null)
+            .daily(DAILY == parameters ? parameters.getParameters() : null)
+            .build()
+    );
+    return dailyWeatherRepository.saveAll(weatherMapper.toEntities(
+        response, location, weatherConditionOpenMeteoDictionary));
   }
 
   @Transactional
