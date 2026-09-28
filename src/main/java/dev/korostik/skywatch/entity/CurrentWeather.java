@@ -18,6 +18,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -25,6 +27,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @Setter
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -44,7 +47,15 @@ public class CurrentWeather {
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @OnDelete(action = OnDeleteAction.RESTRICT)
   @JoinColumn(name = "weather_condition_id", nullable = false)
+  @Exclude
   private WeatherCondition weatherCondition;
+
+  @NotNull
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @OnDelete(action = OnDeleteAction.RESTRICT)
+  @JoinColumn(name = "location_id", nullable = false)
+  @Exclude
+  private Location location;
 
   @NotNull
   @Column(name = "temperature", nullable = false, precision = 4, scale = 1)
@@ -53,12 +64,6 @@ public class CurrentWeather {
   @NotNull
   @Column(name = "humidity", nullable = false)
   private Short humidity;
-
-  @Column(name = "precipitation", precision = 5, scale = 2)
-  private BigDecimal precipitation;
-
-  @Column(name = "precipitation_probability")
-  private Short precipitationProbability;
 
   @Column(name = "wind_speed", precision = 5, scale = 2)
   private BigDecimal windSpeed;

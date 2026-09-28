@@ -32,15 +32,4 @@ public interface OpenMeteoApiClient {
           @RequestParam(value = "timezone", required = false) String timezone,
           @RequestParam(value = "forecast_days", required = false) Integer forecastDays
   );
-
-  @GetMapping("/v1/forecast")
-  String getForecast2(
-          @RequestParam("latitude") Double latitude,
-          @RequestParam("longitude") Double longitude,
-          @RequestParam(value = "hourly", required = false) List<String> hourly,
-          @RequestParam(value = "daily", required = false) List<String> daily,
-          @RequestParam(value = "current", required = false) List<String> current,
-          @RequestParam(value = "timezone", required = false) String timezone,
-          @RequestParam(value = "forecast_days", required = false) Integer forecastDays
-  );
 }

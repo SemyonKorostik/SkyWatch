@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -18,23 +20,20 @@ import java.time.Instant;
 @Setter
 @Entity
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "hourly_weather")
 public class HourlyWeather {
+    //составной ключ location_id, date
     @EmbeddedId
     private HourlyWeatherId id;
-
-    @MapsId("dailyWeatherId")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "daily_weather_id", nullable = false)
-    private DailyWeather dailyWeather;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "weather_condition_id", nullable = false)
+    @Exclude
     private WeatherCondition weatherCondition;
 
     @NotNull

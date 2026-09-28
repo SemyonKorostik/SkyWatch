@@ -1,9 +1,8 @@
 package dev.korostik.skywatch.mapper;
 
 import dev.korostik.skywatch.dto.weather.HourlyData;
-import dev.korostik.skywatch.entity.DailyWeather;
 import dev.korostik.skywatch.entity.HourlyWeatherId;
-import java.time.ZoneOffset;
+import dev.korostik.skywatch.entity.Location;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -11,6 +10,6 @@ import org.mapstruct.Mapping;
 public interface HourlyWeatherIdMapper {
 
   @Mapping(target = "time", expression = "java(hourlyData.time().atZone(zoneOffset).toOffsetDateTime())")
-  @Mapping(target = "dailyWeatherId", source = "dailyWeather.id")
-  HourlyWeatherId toEntity(HourlyData hourlyData, ZoneOffset zoneOffset, DailyWeather dailyWeather);
+  @Mapping(target = "locationId", source = "location.id")
+  HourlyWeatherId toEntity(HourlyData hourlyData, Location location);
 }

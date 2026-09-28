@@ -18,7 +18,7 @@ logging:
     feign: DEBUG
     org.springframework.cloud.openfeign: DEBUG
     # Option A: Enable debugging for a specific client interface
-    dev.korostik.skywatch.client.OpenWeatherApiClientProxy: DEBUG
+    dev.korostik.skywatch.client.dev.korostik.skywatch.client.OpenMeteoApiClientProxy: DEBUG
 app:
   geonames:
     username: semyon610

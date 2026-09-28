@@ -14,4 +14,5 @@ public interface WeatherProviderRepository extends ListCrudRepository<WeatherPro
     List<WeatherProvider> findAllOrderByPriority(Integer priority);
 
     List<WeatherProvider> findAllByIsEnabledOrderByPriorityAsc(Boolean isEnabled);
+
 }
