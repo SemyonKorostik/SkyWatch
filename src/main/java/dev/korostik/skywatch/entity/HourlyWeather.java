@@ -2,8 +2,13 @@ package dev.korostik.skywatch.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -14,45 +19,45 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
+@Builder
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "hourly_weather")
 public class HourlyWeather {
+    //составной ключ location_id, date
     @EmbeddedId
     private HourlyWeatherId id;
-
-    @MapsId("dailyWeatherId")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "daily_weather_id", nullable = false)
-    private DailyWeather dailyWeather;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "weather_condition_id", nullable = false)
+    @Exclude
     private WeatherCondition weatherCondition;
 
     @NotNull
     @Column(name = "temperature", nullable = false, precision = 4, scale = 1)
-    private BigDecimal temperature;
+    private Double temperature;
 
     @NotNull
     @Column(name = "humidity", nullable = false)
-    private Short humidity;
+    private Integer humidity;
 
     @Column(name = "precipitation", precision = 5, scale = 2)
-    private BigDecimal precipitation;
+    private Double precipitation;
 
     @Column(name = "precipitation_probability")
-    private Short precipitationProbability;
+    private Integer precipitationProbability;
 
     @Column(name = "wind_speed", precision = 5, scale = 2)
-    private BigDecimal windSpeed;
+    private Double windSpeed;
 
     @Column(name = "wind_direction")
-    private Short windDirection;
+    private Integer windDirection;
 
     @Column(name = "pressure", precision = 6, scale = 2)
-    private BigDecimal pressure;
+    private Double pressure;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

@@ -3,6 +3,7 @@ package dev.korostik.skywatch.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.ToString.Exclude;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,35 +14,21 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "daily_weather")
 public class DailyWeather {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "daily_weather_seq")
-    @SequenceGenerator(
-            name = "daily_weather_seq",
-            sequenceName = "daily_weather_id_seq",
-            allocationSize = 1
-    )
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.RESTRICT)
-    @JoinColumn(name = "location_id", nullable = false)
-    private Location location;
-
-    @NotNull
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
+    //составной ключ location_id, date
+    @EmbeddedId
+    private DailyWeatherId id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "weather_condition_id", nullable = false)
+    @Exclude
     private WeatherCondition weatherCondition;
 
     @NotNull
@@ -60,8 +47,4 @@ public class DailyWeather {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "(" + "id = " + id + ", " + "date = " + date + ", " + "temperatureMax = " + temperatureMax + ", " + "temperatureMin = " + temperatureMin + ", " + "createdAt = " + createdAt + ", " + "updatedAt = " + updatedAt + ")";
-    }
 }

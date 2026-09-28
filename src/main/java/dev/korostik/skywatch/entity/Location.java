@@ -1,6 +1,8 @@
 package dev.korostik.skywatch.entity;
 
 import jakarta.persistence.*;
+import java.time.ZoneOffset;
+import java.util.TimeZone;
 import lombok.*;
 
 @Getter
@@ -28,6 +30,6 @@ public class Location {
     private Address address;
 
     @Column(name = "time_zone_id", nullable = false)
-    private String timeZoneId;
+    private ZoneOffset timeZone;
 
 }

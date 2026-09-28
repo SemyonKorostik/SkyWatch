@@ -6,8 +6,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record DailyData(
-    @JsonProperty("time") List<LocalDate> time,
-    @JsonProperty("temperature_2m_max") List<Double> temperature2mMax,
-    @JsonProperty("temperature_2m_min") List<Double> temperature2mMin,
-    @JsonProperty("weather_code") List<String> weatherCode
+    @JsonProperty("time") LocalDate time,
+    @JsonProperty("temperature_2m_max") Double temperature2mMax,
+    @JsonProperty("temperature_2m_min") Double temperature2mMin,
+    @JsonProperty("weather_code") String weatherCode
 ) {}
