@@ -6,7 +6,7 @@ import dev.korostik.skywatch.enums.ForecastApiProvider;
 
 public interface ForecastApiClientProxy {
 
-  ForecastApiProvider type();
+  ForecastApiProvider getType();
 
   ForecastResponse getForecast(ForecastRequest request);
 }

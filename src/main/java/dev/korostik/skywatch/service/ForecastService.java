@@ -5,11 +5,10 @@ import static dev.korostik.skywatch.enums.OpenWeatherParameters.DAILY;
 import static dev.korostik.skywatch.enums.OpenWeatherParameters.HOURLY;
 
 import com.pengrad.telegrambot.request.SendMessage;
-import dev.korostik.skywatch.client.OpenMeteoApiClientProxy;
+import dev.korostik.skywatch.client.ForecastApiClientProxy;
 import dev.korostik.skywatch.dto.weather.ForecastRequest;
 import dev.korostik.skywatch.dto.weather.ForecastResponse;
 import dev.korostik.skywatch.entity.Location;
-import dev.korostik.skywatch.entity.WeatherCondition;
 import dev.korostik.skywatch.enums.OpenWeatherParameters;
 import dev.korostik.skywatch.mapper.CurrentWeatherMapper;
 import dev.korostik.skywatch.mapper.DailyWeatherMapper;
@@ -19,9 +18,10 @@ import dev.korostik.skywatch.repository.DailyWeatherRepository;
 import dev.korostik.skywatch.repository.HourlyWeatherRepository;
 import dev.korostik.skywatch.service.dto.WeatherSummary;
 import dev.korostik.skywatch.service.dto.WeatherSummaryDto;
+import dev.korostik.skywatch.telegram.chat.template.ChatTemplates;
+import dev.korostik.skywatch.telegram.chat.template.TemplateEngine;
 import io.ksilisk.telegrambot.core.executor.TelegramBotExecutor;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ForecastService {
 
   /// TO-DO использовать Прокси для получения запроса от разных поставщиков
-  private final OpenMeteoApiClientProxy openMeteoApiClientProxy;
+  private final ForecastApiClientProxy forecastApiClientProxy;
 
   private final CurrentWeatherMapper currentWeatherMapper;
   private final DailyWeatherMapper dailyWeatherMapper;
@@ -43,12 +43,12 @@ public class ForecastService {
   private final DailyWeatherRepository dailyWeatherRepository;
   private final HourlyWeatherRepository hourlyWeatherRepository;
 
-  private final Map<String, WeatherCondition> weatherConditionOpenMeteoDictionary;
+  private final WeatherConditionService weatherConditionService;
   private final TelegramBotExecutor executor;
 
   public ForecastResponse fetchForecast(Location location,
       List<OpenWeatherParameters> parameters, int numberOfDays) {
-    return openMeteoApiClientProxy.getForecast(
+    return forecastApiClientProxy.getForecast(
         ForecastRequest.builder()
             .latitude(location.getLatitude())
             .longitude(location.getLongitude())
@@ -65,15 +65,15 @@ public class ForecastService {
     return WeatherSummary.builder()
         .currentWeather(Optional.ofNullable(response.current())
             .map(x -> currentWeatherMapper.toEntity(x,
-                weatherConditionOpenMeteoDictionary))
+                weatherConditionService.getWithActualProvider()))
             .orElse(null))
         .dailyWeather(Optional.ofNullable(response.daily())
             .map(daily -> dailyWeatherMapper.toEntities(daily, location,
-                weatherConditionOpenMeteoDictionary))
+                weatherConditionService.getWithActualProvider()))
             .orElse(null))
         .hourlyWeather(Optional.ofNullable(response.hourly())
             .map(hourly -> hourlyWeatherMapper.toEntities(hourly, location,
-                weatherConditionOpenMeteoDictionary))
+                weatherConditionService.getWithActualProvider()))
             .orElse(null))
         .build();
   }
@@ -99,7 +99,8 @@ public class ForecastService {
   }
 
   public void sendForecast(Long chatId, WeatherSummaryDto weatherSummaryDto) {
-    executor.execute(new SendMessage(chatId, weatherSummaryDto.toString()));
+    executor.execute(new SendMessage(chatId, Optional.ofNullable(weatherSummaryDto.getCurrentWeather())
+        .map(TemplateEngine.render(ChatTemplates.CURRENT_WEATHER_TEMPLATE, weatherSummaryDto.getCurrentWeather()))));
   }
 
 }

@@ -16,12 +16,12 @@ public abstract class HourlyWeatherMapper {
   protected abstract HourlyWeatherIdMapper idMapper();
 
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "temperature", source = "temperature2m")
+  @Mapping(target = "temperature", source = "temperature")
   @Mapping(target = "precipitation", source = "precipitation")
   @Mapping(target = "precipitationProbability", source = "precipitationProbability")
-  @Mapping(target = "windSpeed", source = "windSpeed10m")
-  @Mapping(target = "windDirection", source = "windDirection10m")
-  @Mapping(target = "humidity", source = "relativeHumidity2m")
+  @Mapping(target = "windSpeed", source = "windSpeed")
+  @Mapping(target = "windDirection", source = "windDirection")
+  @Mapping(target = "humidity", source = "relativeHumidity")
   @Mapping(target = "pressure", source = "surfacePressure")
   @Mapping(target = "weatherCondition", expression = "java(weatherConditions.get(hourlyData.weatherCode()))")
   protected abstract HourlyWeather toEntityInternal(HourlyData hourlyData, Location location,

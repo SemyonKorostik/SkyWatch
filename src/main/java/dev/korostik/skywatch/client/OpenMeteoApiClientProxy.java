@@ -13,7 +13,7 @@ public class OpenMeteoApiClientProxy implements ForecastApiClientProxy{
   private final OpenMeteoApiClient openMeteoApiClient;
 
   @Override
-  public ForecastApiProvider type() {
+  public ForecastApiProvider getType() {
     return ForecastApiProvider.OPEN_METEO;
   }
 

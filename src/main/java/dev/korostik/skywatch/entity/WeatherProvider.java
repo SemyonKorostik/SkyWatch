@@ -1,5 +1,6 @@
 package dev.korostik.skywatch.entity;
 
+import dev.korostik.skywatch.enums.ForecastApiProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -20,7 +21,7 @@ public class WeatherProvider {
     @Id
     @Size(max = 255)
     @Column(name = "name", nullable = false)
-    private String name;
+    private ForecastApiProvider provider;
 
     @Size(max = 255)
     @NotNull

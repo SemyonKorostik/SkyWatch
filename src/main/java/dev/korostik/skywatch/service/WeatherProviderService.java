@@ -4,7 +4,6 @@ import dev.korostik.skywatch.client.ForecastApiClientProxy;
 import dev.korostik.skywatch.entity.WeatherProvider;
 import dev.korostik.skywatch.enums.ForecastApiProvider;
 import dev.korostik.skywatch.repository.WeatherProviderRepository;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,7 @@ public class WeatherProviderService {
   private final WeatherProviderRepository weatherProviderRepository;
   private final Map<ForecastApiProvider, ForecastApiClientProxy> forecastApiClientProxies;
 
-  public WeatherProvider getByName(ForecastApiProvider provider) {
+  public WeatherProvider getByProvider(ForecastApiProvider provider) {
     return weatherProviderRepository.findByName(provider.getName()).orElseThrow();
   }
 
