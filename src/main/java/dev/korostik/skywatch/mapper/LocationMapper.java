@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 public interface LocationMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "timeZoneId", source = "timeZone.timeZoneId")
+    @Mapping(target = "timeZone", expression = "java(ZoneOffset.of(timeZone.timeZoneId))")
     @Mapping(target = "address", source = ".")
     Location mapToEntity(GeoNameDto dto);
 

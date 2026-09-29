@@ -1,3 +1,17 @@
+create function update_updated_at_column() returns trigger
+    language plpgsql
+as
+$$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    NEW.geog = ST_MakePoint(NEW.latitude,NEW.longitude)::geography;
+    RETURN NEW;
+END;
+$$;
+
+alter function update_updated_at_column() owner to postgres;
+
+
 create table if not exists location
 (
     id           bigserial
@@ -129,8 +143,6 @@ create index if not exists idx_weather_conditions_provider_code
 
 create table if not exists daily_weather
 (
-    id                   bigserial
-        primary key,
     location_id          bigint        not null
         constraint daily_weather_location_id_fk
             references location
@@ -143,12 +155,12 @@ create table if not exists daily_weather
     temperature_max      numeric(4, 1) not null,
     temperature_min      numeric(4, 1) not null,
     created_at           timestamp default CURRENT_TIMESTAMP,
-    updated_at           timestamp default CURRENT_TIMESTAMP
+    updated_at           timestamp default CURRENT_TIMESTAMP,
+    constraint daily_weather_pk
+        primary key (location_id, date)
 );
 
 comment on table daily_weather is 'Weather characteristics for the day';
-
-comment on column daily_weather.id is 'Primary key';
 
 comment on column daily_weather.location_id is 'Related location';
 
@@ -185,9 +197,9 @@ execute procedure update_updated_at_column();
 create table if not exists hourly_weather
 (
     time                      timestamp with time zone not null,
-    daily_weather_id          bigint                   not null
-        constraint hourly_weather_daily_weather_id_fk
-            references daily_weather
+    location_id               bigint                   not null
+        constraint hourly_weather_location_id_fk
+            references location
             on update restrict on delete restrict,
     weather_condition_id      bigint                   not null
         constraint hourly_weather_weather_condition_id_fk
@@ -202,14 +214,14 @@ create table if not exists hourly_weather
     pressure                  numeric(6, 2),
     created_at                timestamp default CURRENT_TIMESTAMP,
     updated_at                timestamp default CURRENT_TIMESTAMP,
-    primary key (time, daily_weather_id)
+    primary key (time, location_id)
 );
 
 comment on table hourly_weather is 'Weather characteristics for the hour';
 
 comment on column hourly_weather.time is 'Weather forecast time in iso8601 format with timezone';
 
-comment on column hourly_weather.daily_weather_id is 'Corresponding forecast day';
+comment on column hourly_weather.location_id is 'Corresponding forecast day';
 
 comment on column hourly_weather.weather_condition_id is 'Related weather condition';
 
@@ -235,13 +247,13 @@ alter table hourly_weather
     owner to postgres;
 
 create index if not exists idx_hourly_weather_daily_weather_id
-    on hourly_weather (daily_weather_id);
+    on hourly_weather (location_id);
 
 create index if not exists idx_hourly_weather_time
     on hourly_weather (time);
 
 create index if not exists idx_hourly_weather_daily_time
-    on hourly_weather (daily_weather_id, time);
+    on hourly_weather (location_id, time);
 
 create trigger update_hourly_weather_updated_at
     before update
@@ -268,4 +280,23 @@ alter table spatial_ref_sys
     owner to postgres;
 
 grant select on spatial_ref_sys to public;
+
+create table if not exists current_weather
+(
+    location_id          bigint not null
+        constraint current_weather_pk
+            primary key,
+    weather_condition_id bigint
+        constraint current_weather_weather_conditions_id_fk
+            references weather_conditions,
+    temperature          double precision,
+    wind_speed           double precision,
+    wind_direction       integer,
+    pressure             double precision,
+    created_at           timestamp,
+    updated_at           timestamp
+);
+
+alter table current_weather
+    owner to postgres;
 

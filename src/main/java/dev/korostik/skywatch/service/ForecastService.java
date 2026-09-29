@@ -99,8 +99,7 @@ public class ForecastService {
   }
 
   public void sendForecast(Long chatId, WeatherSummaryDto weatherSummaryDto) {
-    executor.execute(new SendMessage(chatId, Optional.ofNullable(weatherSummaryDto.getCurrentWeather())
-        .map(TemplateEngine.render(ChatTemplates.CURRENT_WEATHER_TEMPLATE, weatherSummaryDto.getCurrentWeather()))));
+    executor.execute(new SendMessage(chatId, weatherSummaryDto.toString()));
   }
 
 }
