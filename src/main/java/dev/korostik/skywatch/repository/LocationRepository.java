@@ -1,24 +1,23 @@
 package dev.korostik.skywatch.repository;
 
 import dev.korostik.skywatch.entity.Location;
-import org.springframework.data.jpa.repository.NativeQuery;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
 public interface LocationRepository extends CrudRepository<Location, Long> {
 
-  @NativeQuery(value = """
+  @Query(nativeQuery = true, value = """
       SELECT *
-      FROM locations l
-      WHERE ST_DistanceSphere(l.geom, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)) <= :radius
-      ORDER BY l.geom <-> ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326) ASC
+      FROM location l
+      WHERE ST_DWithin(l.geog, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography, :radius)
+      ORDER BY l.geog <-> ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography ASC
       LIMIT 1
       """)
-  Optional<Location> findNearestByLatitudeAndLongitude(Double latitude, Double longitude, Integer radius);
+  Optional<Location> findNearestByLatitudeAndLongitude(Double latitude, Double longitude,
+      Integer radius);
 
   /*
    * geom geometry(Point, 4326)

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 public class WeatherConditionService {
 
   private final WeatherProviderService weatherProviderService;
-  private final ForecastApiProviderResolver forecastApiProviderResolver;
   private final WeatherConditionRepository weatherConditionRepository;
 
   public WeatherCondition getByCode(ForecastApiProvider provider, String providerCode) {
@@ -27,10 +26,6 @@ public class WeatherConditionService {
     return weatherConditionRepository.findAllByProviderName(
             weatherProviderService.getByProvider(provider)).stream()
         .collect(Collectors.toUnmodifiableMap(WeatherCondition::getProviderCode, x -> x));
-  }
-
-  public Map<String, WeatherCondition> getWithActualProvider() {
-    return getAllByProvider(forecastApiProviderResolver.getForecastApiProvider());
   }
 
 }

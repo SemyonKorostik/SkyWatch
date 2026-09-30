@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface HourlyWeatherIdMapper {
 
-  @Mapping(target = "time", expression = "java(hourlyData.time().atZone(location.getTimeZone()).toOffsetDateTime())")
+  @Mapping(target = "time", expression = "java(hourlyData.time().atZone(location.getZoneId()).toInstant())")
   @Mapping(target = "locationId", source = "location.id")
   HourlyWeatherId toEntity(HourlyData hourlyData, Location location);
 }

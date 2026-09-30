@@ -17,7 +17,7 @@ public class WeatherProviderService {
   private final Map<ForecastApiProvider, ForecastApiClientProxy> forecastApiClientProxies;
 
   public WeatherProvider getByProvider(ForecastApiProvider provider) {
-    return weatherProviderRepository.findByName(provider.getName()).orElseThrow();
+    return weatherProviderRepository.findByProvider(provider).orElseThrow();
   }
 
   public List<WeatherProvider> getAllEnabled() {

@@ -31,7 +31,7 @@ public class StartCommandHandler implements CommandUpdateHandler {
                 .language(update.message().from().languageCode())
                 .build());
             SendMessage sendMessage = new SendMessage(user.getChatId(),
-                "Hello, " + update.message().from().firstName() + "\nPlease, allow access to location data");
+                "Hello, " + update.message().from().firstName() + "\nPlease, allow access to location value");
             sendMessage.setReplyMarkup(keyboardMenu.getLocationReplyMarkup());
             executor.execute(sendMessage);
         } else {

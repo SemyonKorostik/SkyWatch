@@ -18,8 +18,6 @@ import dev.korostik.skywatch.repository.DailyWeatherRepository;
 import dev.korostik.skywatch.repository.HourlyWeatherRepository;
 import dev.korostik.skywatch.service.dto.WeatherSummary;
 import dev.korostik.skywatch.service.dto.WeatherSummaryDto;
-import dev.korostik.skywatch.telegram.chat.template.ChatTemplates;
-import dev.korostik.skywatch.telegram.chat.template.TemplateEngine;
 import io.ksilisk.telegrambot.core.executor.TelegramBotExecutor;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +41,7 @@ public class ForecastService {
   private final DailyWeatherRepository dailyWeatherRepository;
   private final HourlyWeatherRepository hourlyWeatherRepository;
 
-  private final WeatherConditionService weatherConditionService;
+  private final ForecastApiProviderResolver forecastApiProviderResolver;
   private final TelegramBotExecutor executor;
 
   public ForecastResponse fetchForecast(Location location,
@@ -53,7 +51,7 @@ public class ForecastService {
             .latitude(location.getLatitude())
             .longitude(location.getLongitude())
             .forecastDays(numberOfDays)
-            .timezone(location.getTimeZone().getId())
+            .zoneId(location.getZoneId().getId())
             .current(parameters.contains(CURRENT) ? CURRENT.getParameters() : null)
             .hourly(parameters.contains(HOURLY) ? HOURLY.getParameters() : null)
             .daily(parameters.contains(DAILY) ? DAILY.getParameters() : null)
@@ -64,16 +62,16 @@ public class ForecastService {
   public WeatherSummary mapForecast(ForecastResponse response, Location location) {
     return WeatherSummary.builder()
         .currentWeather(Optional.ofNullable(response.current())
-            .map(x -> currentWeatherMapper.toEntity(x,
-                weatherConditionService.getWithActualProvider()))
+            .map(current -> currentWeatherMapper.toEntity(current, location,
+                forecastApiProviderResolver.getWithActualProvider()))
             .orElse(null))
         .dailyWeather(Optional.ofNullable(response.daily())
             .map(daily -> dailyWeatherMapper.toEntities(daily, location,
-                weatherConditionService.getWithActualProvider()))
+                forecastApiProviderResolver.getWithActualProvider()))
             .orElse(null))
         .hourlyWeather(Optional.ofNullable(response.hourly())
             .map(hourly -> hourlyWeatherMapper.toEntities(hourly, location,
-                weatherConditionService.getWithActualProvider()))
+                forecastApiProviderResolver.getWithActualProvider()))
             .orElse(null))
         .build();
   }
@@ -87,7 +85,7 @@ public class ForecastService {
         .dailyWeather(Optional.ofNullable(weatherSummary.getDailyWeather())
             .map(daily -> dailyWeatherRepository.saveAll(weatherSummary.getDailyWeather())
                 .stream()
-                .collect(Collectors.toUnmodifiableMap(x -> x.getId().getTime(), x -> x)))
+                .collect(Collectors.toUnmodifiableMap(x -> x.getId().getDate(), x -> x)))
             .orElse(null))
         .hourlyWeather(Optional.ofNullable(weatherSummary.getHourlyWeather())
             .map(hourly -> hourlyWeatherRepository.saveAll(weatherSummary.getHourlyWeather())

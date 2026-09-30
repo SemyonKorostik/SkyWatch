@@ -19,7 +19,7 @@ public class User {
     private Long id;
 
     @OneToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
-    @JoinColumn(name = "location_id")
+    @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
     @Column(name = "login", nullable = false, length = 254)

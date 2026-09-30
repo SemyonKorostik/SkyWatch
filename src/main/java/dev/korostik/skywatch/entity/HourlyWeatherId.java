@@ -3,6 +3,7 @@ package dev.korostik.skywatch.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ public class HourlyWeatherId implements Serializable {
     private static final long serialVersionUID = 6311297551880977047L;
     @NotNull
     @Column(name = "\"time\"", nullable = false)
-    private OffsetDateTime time;
+    private Instant time;
 
     @NotNull
     @Column(name = "location_id", nullable = false)

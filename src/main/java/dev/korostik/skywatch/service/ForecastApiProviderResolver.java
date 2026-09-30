@@ -1,6 +1,7 @@
 package dev.korostik.skywatch.service;
 
 import dev.korostik.skywatch.client.ForecastApiClientProxy;
+import dev.korostik.skywatch.entity.WeatherCondition;
 import dev.korostik.skywatch.entity.WeatherProvider;
 import dev.korostik.skywatch.enums.ForecastApiProvider;
 import java.util.Map;
@@ -23,6 +24,10 @@ public class ForecastApiProviderResolver {
         .filter(x -> !weatherConditionService.getAllByProvider(x).isEmpty())
         .findFirst()
         .orElseThrow();
+  }
+
+  public Map<String, WeatherCondition> getWithActualProvider() {
+    return weatherConditionService.getAllByProvider(getForecastApiProvider());
   }
 
 }

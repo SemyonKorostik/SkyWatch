@@ -1,9 +1,9 @@
 package dev.korostik.skywatch.entity;
 
 import jakarta.persistence.*;
-import java.time.ZoneOffset;
-import java.util.TimeZone;
+import java.time.ZoneId;
 import lombok.*;
+import org.springframework.data.geo.Point;
 
 @Getter
 @Setter
@@ -30,6 +30,9 @@ public class Location {
     private Address address;
 
     @Column(name = "time_zone_id", nullable = false)
-    private ZoneOffset timeZone;
+    private ZoneId zoneId;
+//
+//    @Column(name = "geog", insertable = false, updatable = false)
+//    private Point geog;
 
 }

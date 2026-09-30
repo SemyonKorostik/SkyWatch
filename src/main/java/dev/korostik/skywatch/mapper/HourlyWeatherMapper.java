@@ -1,6 +1,7 @@
 package dev.korostik.skywatch.mapper;
 
 import dev.korostik.skywatch.dto.weather.HourlyData;
+import dev.korostik.skywatch.dto.weather.HourlyJsonData;
 import dev.korostik.skywatch.entity.HourlyWeather;
 import dev.korostik.skywatch.entity.Location;
 import dev.korostik.skywatch.entity.WeatherCondition;
@@ -16,6 +17,8 @@ public abstract class HourlyWeatherMapper {
 
   @Autowired
   private HourlyWeatherIdMapper idMapper;
+  @Autowired
+  private HourlyDataMapper hourlyDataMapper;
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "temperature", source = "hourlyData.temperature")
@@ -39,9 +42,9 @@ public abstract class HourlyWeatherMapper {
     return entity;
   }
 
-  public List<HourlyWeather> toEntities(List<HourlyData> hourlyDataList, Location location,
+  public List<HourlyWeather> toEntities(HourlyJsonData dto, Location location,
       Map<String, WeatherCondition> weatherConditions) {
-    return hourlyDataList.stream()
+    return hourlyDataMapper.toList(dto).stream()
         .map(x -> toEntity(x, location, weatherConditions))
         .collect(Collectors.toList());
   }

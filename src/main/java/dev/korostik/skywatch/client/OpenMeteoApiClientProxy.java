@@ -19,6 +19,6 @@ public class OpenMeteoApiClientProxy implements ForecastApiClientProxy{
 
   public ForecastResponse getForecast(ForecastRequest request) {
     return openMeteoApiClient.getForecast(request.latitude(),
-            request.longitude(), request.hourly(), request.daily(), request.current(), request.timezone(), request.forecastDays());
+            request.longitude(), request.hourly(), request.daily(), request.current(), request.zoneId(), request.forecastDays());
   }
 }

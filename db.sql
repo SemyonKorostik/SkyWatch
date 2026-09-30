@@ -1,10 +1,25 @@
+CREATE OR REPLACE FUNCTION populate_geog_on_insert()
+    RETURNS TRIGGER AS $$
+BEGIN
+    -- This calculates the geography point using longitude and latitude
+    -- 4326 is the standard WGS 84 spatial reference identifier (SRID)
+    NEW.geog := ST_SetSRID(ST_MakePoint(NEW.longitude, NEW.latitude), 4326)::geography;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_populate_geog
+    BEFORE INSERT ON location
+    FOR EACH ROW
+EXECUTE FUNCTION populate_geog_on_insert();
+
 create function update_updated_at_column() returns trigger
     language plpgsql
 as
 $$
 BEGIN
     NEW.updated_at = CURRENT_TIMESTAMP;
-    NEW.geog = ST_MakePoint(NEW.latitude,NEW.longitude)::geography;
     RETURN NEW;
 END;
 $$;
@@ -28,6 +43,34 @@ create table if not exists location
         unique (latitude, longitude)
 );
 
+create table spatial_ref_sys
+(
+    srid      integer not null
+        primary key
+        constraint spatial_ref_sys_srid_check
+            check ((srid > 0) AND (srid <= 998999)),
+    auth_name varchar(256),
+    auth_srid integer,
+    srtext    varchar(2048),
+    proj4text varchar(2048)
+);
+
+create table location
+(
+    id           bigserial
+        constraint location_pk
+            primary key,
+    latitude     numeric(10, 8)         not null,
+    longitude    numeric(11, 8)         not null,
+    time_zone_id varchar(255)           not null,
+    country      varchar(255)           not null,
+    place_name   varchar(255)           not null,
+    geog         geography(Point, 4326) not null,
+    updated_at   timestamp,
+    constraint latitude_longitude_uk
+        unique (latitude, longitude)
+);
+
 comment on table location is 'The table contains data on the object''s location.';
 
 comment on column location.id is 'Primary key';
@@ -36,40 +79,38 @@ comment on column location.latitude is 'Latitude coordinate';
 
 comment on column location.longitude is 'Longitude coordinate';
 
-alter table location
-    owner to postgres;
-
 create trigger update_location_updated_at
     before update
     on location
     for each row
 execute procedure update_updated_at_column();
 
-create table if not exists "User"
+create trigger trg_populate_geog
+    before insert
+    on location
+    for each row
+execute procedure populate_geog_on_insert();
+
+create table "User"
 (
-    id          bigint  default nextval('user_id_seq'::regclass) not null
-        constraint user_id_uindex
-            primary key,
     location_id bigint
         constraint user_location_id_fk
             references location,
     login       varchar(254)                                     not null,
     language    char(2) default 'EN'::bpchar                     not null,
     chat_id     bigint
+        constraint chat_uk
+            unique,
+    id          bigint  default nextval('user_id_seq'::regclass) not null
         constraint user_pk
             unique
 );
 
 comment on table "User" is 'Table containing user data';
 
-comment on column "User".id is 'Primary key';
-
 comment on column "User".login is 'User login';
 
-alter table "User"
-    owner to postgres;
-
-create table if not exists weather_provider
+create table weather_provider
 (
     name       varchar(255)         not null
         primary key,
@@ -88,10 +129,7 @@ comment on column weather_provider.priority is 'Weather provider''s priority. 1 
 
 comment on column weather_provider.is_enabled is 'Weather provider''s availability';
 
-alter table weather_provider
-    owner to postgres;
-
-create table if not exists wmo_weather_codes
+create table wmo_weather_codes
 (
     id            serial
         primary key,
@@ -106,10 +144,10 @@ create table if not exists wmo_weather_codes
     created_at    timestamp default CURRENT_TIMESTAMP
 );
 
-alter table wmo_weather_codes
-    owner to postgres;
+create index idx_wmo_code
+    on wmo_weather_codes (code);
 
-create table if not exists weather_conditions
+create table weather_conditions
 (
     id            bigserial
         primary key,
@@ -135,13 +173,10 @@ comment on column weather_conditions.provider_code is 'Weather code';
 
 comment on column weather_conditions.wmo_code is 'Weather description';
 
-alter table weather_conditions
-    owner to postgres;
-
-create index if not exists idx_weather_conditions_provider_code
+create index idx_weather_conditions_provider_code
     on weather_conditions (provider_name, provider_code);
 
-create table if not exists daily_weather
+create table daily_weather
 (
     location_id          bigint        not null
         constraint daily_weather_location_id_fk
@@ -176,16 +211,13 @@ comment on column daily_weather.created_at is 'Creation timestamp';
 
 comment on column daily_weather.updated_at is 'Last update timestamp';
 
-alter table daily_weather
-    owner to postgres;
-
-create index if not exists idx_daily_weather_location_id_date
+create index idx_daily_weather_location_id_date
     on daily_weather (location_id, date);
 
-create index if not exists idx_daily_weather_date
+create index idx_daily_weather_date
     on daily_weather (date);
 
-create index if not exists idx_daily_weather_location_id
+create index idx_daily_weather_location_id
     on daily_weather (location_id);
 
 create trigger update_daily_weather_updated_at
@@ -194,7 +226,7 @@ create trigger update_daily_weather_updated_at
     for each row
 execute procedure update_updated_at_column();
 
-create table if not exists hourly_weather
+create table hourly_weather
 (
     time                      timestamp with time zone not null,
     location_id               bigint                   not null
@@ -243,16 +275,13 @@ comment on column hourly_weather.created_at is 'Creation timestamp';
 
 comment on column hourly_weather.updated_at is 'Last update timestamp';
 
-alter table hourly_weather
-    owner to postgres;
-
-create index if not exists idx_hourly_weather_daily_weather_id
+create index idx_hourly_weather_daily_weather_id
     on hourly_weather (location_id);
 
-create index if not exists idx_hourly_weather_time
+create index idx_hourly_weather_time
     on hourly_weather (time);
 
-create index if not exists idx_hourly_weather_daily_time
+create index idx_hourly_weather_daily_time
     on hourly_weather (location_id, time);
 
 create trigger update_hourly_weather_updated_at
@@ -261,27 +290,7 @@ create trigger update_hourly_weather_updated_at
     for each row
 execute procedure update_updated_at_column();
 
-create index if not exists idx_wmo_code
-    on wmo_weather_codes (code);
-
-create table if not exists spatial_ref_sys
-(
-    srid      integer not null
-        primary key
-        constraint spatial_ref_sys_srid_check
-            check ((srid > 0) AND (srid <= 998999)),
-    auth_name varchar(256),
-    auth_srid integer,
-    srtext    varchar(2048),
-    proj4text varchar(2048)
-);
-
-alter table spatial_ref_sys
-    owner to postgres;
-
-grant select on spatial_ref_sys to public;
-
-create table if not exists current_weather
+create table current_weather
 (
     location_id          bigint not null
         constraint current_weather_pk
@@ -294,9 +303,43 @@ create table if not exists current_weather
     wind_direction       integer,
     pressure             double precision,
     created_at           timestamp,
-    updated_at           timestamp
+    updated_at           timestamp,
+    humidity             integer
 );
 
-alter table current_weather
-    owner to postgres;
+create function update_created_at_column() returns trigger
+    language plpgsql
+as
+$$
+BEGIN
+    NEW.created_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$;
+
+alter function update_created_at_column() owner to postgres;
+
+create trigger update_daily_weather_created_at
+    before insert
+    on daily_weather
+    for each row
+execute procedure update_created_at_column();
+
+create trigger update_current_weather_created_at
+    before insert
+    on current_weather
+    for each row
+execute procedure update_created_at_column();
+
+create trigger update_hourly_weather_created_at
+    before insert
+    on hourly_weather
+    for each row
+execute procedure update_created_at_column();
+
+create trigger update_location_created_at
+    before insert
+    on location
+    for each row
+execute procedure update_created_at_column();
 
