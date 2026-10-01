@@ -19,12 +19,13 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.spring.boot.starter.test)
+    implementation(libs.spring.boot.starter)
     developmentOnly(libs.spring.boot.devtools)
     annotationProcessor(libs.spring.boot.configuration.processor)
     compileOnly(libs.projectlombok)
     annotationProcessor(libs.projectlombok)
     testImplementation(platform(libs.junit))
+    testImplementation(libs.spring.boot.starter.test)
     testCompileOnly(libs.projectlombok)
     testAnnotationProcessor(libs.projectlombok)
     testRuntimeOnly(libs.junit.platform.launcher)
