@@ -19,11 +19,12 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.spring.boot.starter)
+    implementation(libs.spring.boot.starter.data.jpa)
     developmentOnly(libs.spring.boot.devtools)
     annotationProcessor(libs.spring.boot.configuration.processor)
     compileOnly(libs.projectlombok)
     annotationProcessor(libs.projectlombok)
+    runtimeOnly(libs.postgresql)
     testImplementation(platform(libs.junit))
     testImplementation(libs.spring.boot.starter.test)
     testCompileOnly(libs.projectlombok)
