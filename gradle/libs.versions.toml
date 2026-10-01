@@ -3,6 +3,7 @@ spring-boot = "4.1.1"
 dependency-management = "1.1.7"
 lombok = "1.18.46"
 java = "17"
+junit = "6.1.3"
 
 [libraries]
 #Spring Boot
@@ -12,6 +13,10 @@ spring-boot-configuration-processor = { group = "org.springframework.boot", name
 
 #Lombok
 projectlombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+
+#JUnit
+junit = { group = "org.junit", name = "junit-bom", version.ref = "junit" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit" }
 
 [plugins]
 dependency-management = { id = "io.spring.dependency-management", version.ref = "dependency-management" }

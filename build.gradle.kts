@@ -24,9 +24,10 @@ dependencies {
     annotationProcessor(libs.spring.boot.configuration.processor)
     compileOnly(libs.projectlombok)
     annotationProcessor(libs.projectlombok)
+    testImplementation(platform(libs.junit))
     testCompileOnly(libs.projectlombok)
     testAnnotationProcessor(libs.projectlombok)
-
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.withType<Test> {
