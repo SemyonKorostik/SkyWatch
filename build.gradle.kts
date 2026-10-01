@@ -1,7 +1,7 @@
 plugins {
     java
-    id("org.springframework.boot") version "4.1.0"
-    id("io.spring.dependency-management") version "1.1.7"
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.dependency.management)
 }
 
 group = "dev.korostik"
@@ -10,7 +10,7 @@ description = "SkyWatch"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
     }
 }
 
@@ -19,15 +19,14 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter")
-    compileOnly("org.projectlombok:lombok")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    annotationProcessor("org.projectlombok:lombok")
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testCompileOnly("org.projectlombok:lombok")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testAnnotationProcessor("org.projectlombok:lombok")
+    implementation(libs.spring.boot.starter.test)
+    developmentOnly(libs.spring.boot.devtools)
+    annotationProcessor(libs.spring.boot.configuration.processor)
+    compileOnly(libs.projectlombok)
+    annotationProcessor(libs.projectlombok)
+    testCompileOnly(libs.projectlombok)
+    testAnnotationProcessor(libs.projectlombok)
+
 }
 
 tasks.withType<Test> {
