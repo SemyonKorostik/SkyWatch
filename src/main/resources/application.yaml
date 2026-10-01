@@ -1,3 +1,8 @@
 spring:
   application:
     name: SkyWatch
+  datasource:
+    url: jdbc:postgresql://localhost:5433/skywatch
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
