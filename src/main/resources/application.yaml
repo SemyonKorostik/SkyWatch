@@ -6,3 +6,5 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
+  liquibase:
+    enabled: true
