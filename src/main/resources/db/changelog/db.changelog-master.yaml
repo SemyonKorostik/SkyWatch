@@ -1,1 +1,4 @@
 databaseChangeLog:
+  # extensions
+  - include:
+      file: db/changelog/migrations/postgresql/extensions/1-extensions.yaml
