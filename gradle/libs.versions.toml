@@ -2,7 +2,7 @@
 spring-boot = "4.1.1"
 dependency-management = "1.1.7"
 lombok = "1.18.46"
-java = "17"
+java = "21"
 junit = "6.1.3"
 testcontainers = "1.21.4"
 postgresql = "42.7.13"
