@@ -2,3 +2,22 @@ databaseChangeLog:
   # extensions
   - include:
       file: db/changelog/migrations/postgresql/extensions/1-extensions.yaml
+  # tables
+  - include:
+      file: db/changelog/migrations/postgresql/tables/1-users-table.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/tables/2-location-table.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/tables/3-location-name-table.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/tables/4-weather-provider-table.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/tables/5-wmo-weather-codes-table.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/tables/6-weather-conditions-table.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/tables/7-daily-weather-table.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/tables/8-hourly-weather-table.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/tables/9-current-weather-table.yaml
