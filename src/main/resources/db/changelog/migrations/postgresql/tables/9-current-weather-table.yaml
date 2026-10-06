@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: '001-add-current-weather-table'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table current_weather
+              (
+              location_id          bigint            not null,
+              weather_condition_id bigint            not null,
+              temperature          double precision  not null,
+              wind_speed           double precision  not null,
+              wind_direction       integer,
+              humidity             integer,
+              pressure             double precision,
+              created_at           timestamp         not null,
+              updated_at           timestamp         not null,
+              constraint pk_current_weather primary key (location_id),
+              constraint chk_current_weather_wind_speed check (wind_speed >= 0),
+              constraint chk_current_weather_humidity check (humidity between 0 and 100),
+              constraint chk_current_weather_wind_direction check (wind_direction between 0 and 360),
+              constraint chk_current_weather_pressure check (pressure > 0)
+              );
+      rollback:
+        - sql:
+            sql: drop table current_weather

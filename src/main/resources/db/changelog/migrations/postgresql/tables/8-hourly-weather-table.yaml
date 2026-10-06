@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: '001-add-hourly-weather-table'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table hourly_weather
+              (
+              time                      timestamp                not null,
+              location_id               bigint                   not null,
+              weather_condition_id      bigint                   not null,
+              temperature               double precision         not null,
+              wind_speed                double precision         not null,
+              humidity                  int,
+              precipitation             double precision,
+              precipitation_probability int,
+              wind_direction            int,
+              pressure                  double precision,
+              created_at                timestamp                default CURRENT_TIMESTAMP not null,
+              updated_at                timestamp                default CURRENT_TIMESTAMP not null,
+              constraint pk_hourly_weather primary key (time, location_id),
+              constraint chk_hourly_weather_wind_speed check (wind_speed >= 0),
+              constraint chk_hourly_weather_humidity check (humidity between 0 and 100),
+              constraint chk_hourly_weather_precipitation check (precipitation >= 0),
+              constraint chk_hourly_weather_precipitation_prob check (precipitation_probability between 0 and 100),
+              constraint chk_hourly_weather_wind_direction check (wind_direction between 0 and 360),
+              constraint chk_hourly_weather_pressure check (pressure > 0)
+              );
+      rollback:
+        - sql:
+            sql: drop table hourly_weather

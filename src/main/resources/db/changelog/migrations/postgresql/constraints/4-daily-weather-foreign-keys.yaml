@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: '001-add-daily-weather-foreign-keys'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              alter table daily_weather
+              add constraint fk_daily_weather_location foreign key (location_id) references location (id);
+        - sql:
+            sql:
+              alter table daily_weather
+              add constraint fk_daily_weather_condition foreign key (weather_condition_id) references weather_conditions (id);
+      rollback:
+        - sql:
+            sql: alter table daily_weather drop constraint fk_daily_weather_condition
+        - sql:
+            sql: alter table daily_weather drop constraint fk_daily_weather_location

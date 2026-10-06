@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-add-users-table
+      author: s.korostik
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table users
+              (
+                id          bigserial    not null,
+                login       varchar(255) not null,
+                language    char(2)      default 'EN'::bpchar not null,
+                location_id bigint,
+                chat_id     bigint       not null,
+                created_at  timestamp    default CURRENT_TIMESTAMP not null,
+                updated_at  timestamp    default CURRENT_TIMESTAMP not null,
+                constraint pk_users primary key (id),
+                constraint uq_users_login unique (login),
+                constraint chk_users_chat_id check (chat_id > 0)
+              );
+      rollback:
+        - sql:
+            sql: drop table users

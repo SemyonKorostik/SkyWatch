@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: '001-add-postgis-extention'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql: CREATE EXTENSION IF NOT EXISTS postgis
