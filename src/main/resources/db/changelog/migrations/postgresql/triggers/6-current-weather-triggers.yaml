@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: '001-add-current-weather-timestamps-triggers'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create trigger trg_current_weather_set_timestamps
+              before insert or update on current_weather
+              for each row
+              execute function set_timestamps();
+      rollback:
+        - sql:
+            sql: drop trigger trg_current_weather_set_timestamps on current_weather

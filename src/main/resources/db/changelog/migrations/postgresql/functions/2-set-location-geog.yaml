@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: '001-create-set-location-geog-function'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            splitStatements: false
+            endDelimiter: $$
+            sql:
+              create or replace function set_location_geog()
+              returns trigger
+              language plpgsql
+              as $$
+              begin
+                new.geog := ST_MakePoint(new.longitude, new.latitude)::geography;
+                return new;
+              end;
+              $$;
+      rollback:
+        - sql:
+            sql: drop function set_location_geog()

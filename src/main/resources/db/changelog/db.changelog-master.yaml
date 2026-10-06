@@ -34,3 +34,21 @@ databaseChangeLog:
       file: db/changelog/migrations/postgresql/constraints/5-hourly-weather-foreign-keys.yaml
   - include:
       file: db/changelog/migrations/postgresql/constraints/6-current-weather-foreign-keys.yaml
+  # functions
+  - include:
+      file: db/changelog/migrations/postgresql/functions/1-set-timestamps.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/functions/2-set-location-geog.yaml
+  # triggers
+  - include:
+      file: db/changelog/migrations/postgresql/triggers/1-users-triggers.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/triggers/2-location-triggers.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/triggers/3-wmo-weather-codes-triggers.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/triggers/4-daily-weather-triggers.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/triggers/5-hourly-weather-triggers.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/triggers/6-current-weather-triggers.yaml
