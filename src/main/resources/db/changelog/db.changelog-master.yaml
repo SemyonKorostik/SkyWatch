@@ -21,3 +21,16 @@ databaseChangeLog:
       file: db/changelog/migrations/postgresql/tables/8-hourly-weather-table.yaml
   - include:
       file: db/changelog/migrations/postgresql/tables/9-current-weather-table.yaml
+  # constraints
+  - include:
+      file: db/changelog/migrations/postgresql/constraints/1-users-foreign-keys.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/constraints/2-location-name-foreign-keys.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/constraints/3-weather-conditions-foreign-keys.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/constraints/4-daily-weather-foreign-keys.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/constraints/5-hourly-weather-foreign-keys.yaml
+  - include:
+      file: db/changelog/migrations/postgresql/constraints/6-current-weather-foreign-keys.yaml

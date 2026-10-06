@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: '001-add-location-name-foreign-keys'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              alter table location_name
+              add constraint fk_location_name_location foreign key (location_id) references location (id);
+      rollback:
+        - sql:
+            sql: alter table location_name drop constraint fk_location_name_location
