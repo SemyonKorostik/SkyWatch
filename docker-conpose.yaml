@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgis/postgis:18-3.6-alpine
+    container_name: skywatch_postgis_db
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: skywatch
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+
+volumes:
+  pgdata:
