@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: '002'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create trigger trg_location_set_geog
+              before insert or update on location
+              for each row
+              execute function set_location_geog();
+      rollback:
+        - sql:
+            sql: drop trigger trg_location_set_geog on location

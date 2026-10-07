@@ -1,11 +1,11 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/migrations/postgresql/01-extensions.yaml
+      file: db/changelog/migrations/v1/01-extensions.yaml
   - include:
-      file: db/changelog/migrations/postgresql/02-tables.yaml
+      file: db/changelog/migrations/v1/02-tables.yaml
   - include:
-      file: db/changelog/migrations/postgresql/03-constraints.yaml
+      file: db/changelog/migrations/v1/03-constraints.yaml
   - include:
-      file: db/changelog/migrations/postgresql/04-functions.yaml
+      file: db/changelog/migrations/v1/04-functions.yaml
   - include:
-      file: db/changelog/migrations/postgresql/05-triggers.yaml
+      file: db/changelog/migrations/v1/05-triggers.yaml

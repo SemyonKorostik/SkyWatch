@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: '002'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            splitStatements: false
+            endDelimiter: $$
+            sql: |
+              CREATE OR REPLACE FUNCTION set_location_geog()
+              RETURNS TRIGGER AS $$
+              BEGIN
+                NEW.geog = ST_SetSRID(ST_MakePoint(NEW.longitude, NEW.latitude), 4326);
+                RETURN NEW;
+              END;
+              $$ LANGUAGE plpgsql;
+      rollback:
+        - sql:
+            sql: DROP FUNCTION IF EXISTS set_location_geog();
