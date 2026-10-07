@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: '001-add-postgis-extention'
+      id: '001'
       author: 's.korostik'
       dbms: postgresql
       changes:
