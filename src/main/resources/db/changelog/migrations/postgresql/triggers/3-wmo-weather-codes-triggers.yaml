@@ -13,3 +13,17 @@ databaseChangeLog:
       rollback:
         - sql:
             sql: drop trigger trg_wmo_weather_codes_set_timestamps on wmo_weather_codes
+  - changeSet:
+      id: '002-remove-wmo-weather-codes-timestamps-trigger'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql: drop trigger trg_wmo_weather_codes_set_timestamps on wmo_weather_codes
+      rollback:
+        - sql:
+            sql:
+              create trigger trg_wmo_weather_codes_set_timestamps
+              before insert or update on wmo_weather_codes
+              for each row
+              execute function set_timestamps();

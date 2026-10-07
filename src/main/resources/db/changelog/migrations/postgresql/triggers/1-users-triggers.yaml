@@ -13,3 +13,17 @@ databaseChangeLog:
       rollback:
         - sql:
             sql: drop trigger trg_users_set_timestamps on users
+  - changeSet:
+      id: '002-remove-users-timestamps-trigger'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql: drop trigger trg_users_set_timestamps on users
+      rollback:
+        - sql:
+            sql:
+              create trigger trg_users_set_timestamps
+              before insert or update on users
+              for each row
+              execute function set_timestamps();
