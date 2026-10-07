@@ -1,0 +1,212 @@
+databaseChangeLog:
+  - changeSet:
+      id: '001'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table users
+              (
+                id          bigserial    not null,
+                login       varchar(255) not null,
+                language    char(2)      default 'EN'::bpchar not null,
+                location_id bigint,
+                chat_id     bigint       not null,
+                created_at  timestamp    default CURRENT_TIMESTAMP not null,
+                updated_at  timestamp    default CURRENT_TIMESTAMP not null,
+                constraint pk_users primary key (id),
+                constraint uq_users_login unique (login),
+                constraint chk_users_chat_id check (chat_id > 0)
+              );
+      rollback:
+        - sql:
+            sql: drop table users
+  - changeSet:
+      id: '002'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table location
+              (
+              id           bigserial              not null,
+              latitude     double precision       not null,
+              longitude    double precision       not null,
+              time_zone_id varchar(255)           not null,
+              geog         geography(Point, 4326) not null,
+              created_at   timestamp              default CURRENT_TIMESTAMP not null,
+              updated_at   timestamp              default CURRENT_TIMESTAMP not null,
+              constraint pk_location primary key (id),
+              constraint chk_location_latitude check (latitude between -90 and 90),
+              constraint chk_location_longitude check (longitude between -180 and 180)
+              );
+      rollback:
+        - sql:
+            sql: drop table location
+  - changeSet:
+      id: '003'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table location_name
+              (
+              location_id bigint       not null,
+              language    char(2)      not null,
+              country     varchar(255) not null,
+              place_name  varchar(255) not null,
+              constraint pk_location_name primary key (location_id, language)
+              );
+      rollback:
+        - sql:
+            sql: drop table location_name
+  - changeSet:
+      id: '004'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table weather_provider
+              (
+              name       varchar(255)         not null,
+              api_url    varchar(255)         not null,
+              priority   integer              default 1    not null,
+              is_enabled boolean              default true not null,
+              constraint pk_weather_provider primary key (name),
+              constraint chk_weather_provider_priority check (priority >= 1)
+              );
+      rollback:
+        - sql:
+            sql: drop table weather_provider
+  - changeSet:
+      id: '005'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table wmo_weather_codes
+              (
+              code          varchar(2)  not null,
+              description   text        not null,
+              category      varchar(50) not null,
+              subcategory   varchar(100),
+              emoji         varchar(10) not null,
+              intensity     varchar(20),
+              weather_group varchar(30) not null,
+              created_at    timestamp   default CURRENT_TIMESTAMP not null,
+              updated_at    timestamp   default CURRENT_TIMESTAMP not null,
+              constraint pk_wmo_weather_codes primary key (code)
+              );
+      rollback:
+        - sql:
+            sql: drop table wmo_weather_codes
+  - changeSet:
+      id: '006'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table weather_conditions
+              (
+              id            bigserial    not null,
+              provider_name varchar(255) not null,
+              provider_code varchar(10)  not null,
+              wmo_code      varchar(2)   not null,
+              constraint pk_weather_conditions primary key (id)
+              );
+      rollback:
+        - sql:
+            sql: drop table weather_conditions
+  - changeSet:
+      id: '007'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table daily_weather
+              (
+              location_id          bigint           not null,
+              date                 timestamp        not null,
+              weather_condition_id bigint           not null,
+              temperature_max      double precision not null,
+              temperature_min      double precision not null,
+              wind_speed           double precision not null,
+              wind_direction       integer,
+              humidity             integer,
+              created_at           timestamp        default CURRENT_TIMESTAMP not null,
+              updated_at           timestamp        default CURRENT_TIMESTAMP not null,
+              constraint pk_daily_weather primary key (location_id, date),
+              constraint chk_daily_weather_wind_speed check (wind_speed >= 0),
+              constraint chk_daily_weather_humidity check (humidity between 0 and 100),
+              constraint chk_daily_weather_wind_direction check (wind_direction between 0 and 360),
+              constraint chk_daily_weather_temperature_range check (temperature_max >= temperature_min)
+              );
+      rollback:
+        - sql:
+            sql: drop table daily_weather
+  - changeSet:
+      id: '008'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table hourly_weather
+              (
+              time                      timestamp                not null,
+              location_id               bigint                   not null,
+              weather_condition_id      bigint                   not null,
+              temperature               double precision         not null,
+              wind_speed                double precision         not null,
+              humidity                  int,
+              precipitation             double precision,
+              precipitation_probability int,
+              wind_direction            int,
+              pressure                  double precision,
+              created_at                timestamp                default CURRENT_TIMESTAMP not null,
+              updated_at                timestamp                default CURRENT_TIMESTAMP not null,
+              constraint pk_hourly_weather primary key (time, location_id),
+              constraint chk_hourly_weather_wind_speed check (wind_speed >= 0),
+              constraint chk_hourly_weather_humidity check (humidity between 0 and 100),
+              constraint chk_hourly_weather_precipitation check (precipitation >= 0),
+              constraint chk_hourly_weather_precipitation_prob check (precipitation_probability between 0 and 100),
+              constraint chk_hourly_weather_wind_direction check (wind_direction between 0 and 360),
+              constraint chk_hourly_weather_pressure check (pressure > 0)
+              );
+      rollback:
+        - sql:
+            sql: drop table hourly_weather
+  - changeSet:
+      id: '009'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              create table current_weather
+              (
+              location_id          bigint            not null,
+              weather_condition_id bigint            not null,
+              temperature          double precision  not null,
+              wind_speed           double precision  not null,
+              wind_direction       integer,
+              humidity             integer,
+              pressure             double precision,
+              created_at           timestamp         not null,
+              updated_at           timestamp         not null,
+              constraint pk_current_weather primary key (location_id),
+              constraint chk_current_weather_wind_speed check (wind_speed >= 0),
+              constraint chk_current_weather_humidity check (humidity between 0 and 100),
+              constraint chk_current_weather_wind_direction check (wind_direction between 0 and 360),
+              constraint chk_current_weather_pressure check (pressure > 0)
+              );
+      rollback:
+        - sql:
+            sql: drop table current_weather

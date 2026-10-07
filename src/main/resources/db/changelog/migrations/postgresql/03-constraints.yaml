@@ -1,0 +1,97 @@
+databaseChangeLog:
+  - changeSet:
+      id: '001'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              alter table users
+              add constraint fk_users_location foreign key (location_id) references location (id);
+      rollback:
+        - sql:
+            sql: alter table users drop constraint fk_users_location
+  - changeSet:
+      id: '002'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              alter table location_name
+              add constraint fk_location_name_location foreign key (location_id) references location (id);
+      rollback:
+        - sql:
+            sql: alter table location_name drop constraint fk_location_name_location
+  - changeSet:
+      id: '003'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              alter table weather_conditions
+              add constraint fk_weather_conditions_provider foreign key (provider_name) references weather_provider (name);
+        - sql:
+            sql:
+              alter table weather_conditions
+              add constraint fk_weather_conditions_wmo_code foreign key (wmo_code) references wmo_weather_codes (code);
+      rollback:
+        - sql:
+            sql: alter table weather_conditions drop constraint fk_weather_conditions_wmo_code
+        - sql:
+            sql: alter table weather_conditions drop constraint fk_weather_conditions_provider
+  - changeSet:
+      id: '004'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              alter table daily_weather
+              add constraint fk_daily_weather_location foreign key (location_id) references location (id);
+        - sql:
+            sql:
+              alter table daily_weather
+              add constraint fk_daily_weather_condition foreign key (weather_condition_id) references weather_conditions (id);
+      rollback:
+        - sql:
+            sql: alter table daily_weather drop constraint fk_daily_weather_condition
+        - sql:
+            sql: alter table daily_weather drop constraint fk_daily_weather_location
+  - changeSet:
+      id: '005'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              alter table hourly_weather
+              add constraint fk_hourly_weather_location foreign key (location_id) references location (id);
+        - sql:
+            sql:
+              alter table hourly_weather
+              add constraint fk_hourly_weather_condition foreign key (weather_condition_id) references weather_conditions (id);
+      rollback:
+        - sql:
+            sql: alter table hourly_weather drop constraint fk_hourly_weather_condition
+        - sql:
+            sql: alter table hourly_weather drop constraint fk_hourly_weather_location
+  - changeSet:
+      id: '006'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              alter table current_weather
+              add constraint fk_current_weather_location foreign key (location_id) references location (id);
+        - sql:
+            sql:
+              alter table current_weather
+              add constraint fk_current_weather_condition foreign key (weather_condition_id) references weather_conditions (id);
+      rollback:
+        - sql:
+            sql: alter table current_weather drop constraint fk_current_weather_condition
+        - sql:
+            sql: alter table current_weather drop constraint fk_current_weather_location
