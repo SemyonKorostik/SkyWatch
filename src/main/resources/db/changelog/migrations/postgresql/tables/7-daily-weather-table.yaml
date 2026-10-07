@@ -27,3 +27,17 @@ databaseChangeLog:
       rollback:
         - sql:
             sql: drop table daily_weather
+  - changeSet:
+      id: '002-remove-default-timestamp'
+      author: 's.korostik'
+      dbms: postgresql
+      changes:
+        - sql:
+            sql:
+              ALTER TABLE daily_weather ALTER COLUMN created_at DROP DEFAULT;
+              ALTER TABLE daily_weather ALTER COLUMN updated_at DROP DEFAULT;
+      rollback:
+        - sql:
+            sql:
+              ALTER TABLE daily_weather ALTER COLUMN created_at SET DEFAULT CURRENT_TIMESTAMP;
+              ALTER TABLE daily_weather ALTER COLUMN updated_at SET DEFAULT CURRENT_TIMESTAMP;
