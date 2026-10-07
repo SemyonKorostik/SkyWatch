@@ -36,9 +36,7 @@ databaseChangeLog:
       file: db/changelog/migrations/postgresql/constraints/6-current-weather-foreign-keys.yaml
   # functions
   - include:
-      file: db/changelog/migrations/postgresql/functions/1-set-timestamps.yaml
-  - include:
-      file: db/changelog/migrations/postgresql/functions/2-set-location-geog.yaml
+      file: db/changelog/migrations/postgresql/functions/1-trigger-functions.yaml
   # triggers
   - include:
       file: db/changelog/migrations/postgresql/triggers/1-users-triggers.yaml

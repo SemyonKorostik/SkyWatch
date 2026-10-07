@@ -13,8 +13,8 @@ databaseChangeLog:
               language plpgsql
               as $$
               begin
-                new.geog := ST_MakePoint(new.longitude, new.latitude)::geography;
-                return new;
+              new.geog := ST_MakePoint(new.longitude, new.latitude)::geography;
+              return new;
               end;
               $$;
       rollback:
