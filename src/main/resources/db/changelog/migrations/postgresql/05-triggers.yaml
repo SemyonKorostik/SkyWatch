@@ -1,29 +1,9 @@
 databaseChangeLog:
   - changeSet:
-      id: '001'
-      author: 's.korostik'
-      dbms: postgresql
-      changes:
-        - sql:
-            sql:
-              create trigger trg_users_set_timestamps
-              before insert or update on users
-              for each row
-              execute function set_timestamps();
-      rollback:
-        - sql:
-            sql: drop trigger trg_users_set_timestamps on users
-  - changeSet:
       id: '002'
       author: 's.korostik'
       dbms: postgresql
       changes:
-        - sql:
-            sql:
-              create trigger trg_location_set_timestamps
-              before insert or update on location
-              for each row
-              execute function set_timestamps();
         - sql:
             sql:
               create trigger trg_location_set_geog
@@ -33,61 +13,3 @@ databaseChangeLog:
       rollback:
         - sql:
             sql: drop trigger trg_location_set_geog on location
-        - sql:
-            sql: drop trigger trg_location_set_timestamps on location
-  - changeSet:
-      id: '003'
-      author: 's.korostik'
-      dbms: postgresql
-      changes:
-        - sql:
-            sql:
-              create trigger trg_wmo_weather_codes_set_timestamps
-              before insert or update on wmo_weather_codes
-              for each row
-              execute function set_timestamps();
-      rollback:
-        - sql:
-            sql: drop trigger trg_wmo_weather_codes_set_timestamps on wmo_weather_codes
-  - changeSet:
-      id: '004'
-      author: 's.korostik'
-      dbms: postgresql
-      changes:
-        - sql:
-            sql:
-              create trigger trg_daily_weather_set_timestamps
-              before insert or update on daily_weather
-              for each row
-              execute function set_timestamps();
-      rollback:
-        - sql:
-            sql: drop trigger trg_daily_weather_set_timestamps on daily_weather
-  - changeSet:
-      id: '005'
-      author: 's.korostik'
-      dbms: postgresql
-      changes:
-        - sql:
-            sql:
-              create trigger trg_hourly_weather_set_timestamps
-              before insert or update on hourly_weather
-              for each row
-              execute function set_timestamps();
-      rollback:
-        - sql:
-            sql: drop trigger trg_hourly_weather_set_timestamps on hourly_weather
-  - changeSet:
-      id: '006'
-      author: 's.korostik'
-      dbms: postgresql
-      changes:
-        - sql:
-            sql:
-              create trigger trg_current_weather_set_timestamps
-              before insert or update on current_weather
-              for each row
-              execute function set_timestamps();
-      rollback:
-        - sql:
-            sql: drop trigger trg_current_weather_set_timestamps on current_weather
