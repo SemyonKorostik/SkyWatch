@@ -19,6 +19,8 @@ repositories {
 }
 
 dependencies {
+    implementation(platform(libs.spring.boot.dependencies))
+    implementation(platform(libs.spring.cloud))
     implementation(libs.spring.boot.starter.data.jpa)
     developmentOnly(libs.spring.boot.devtools)
     annotationProcessor(libs.spring.boot.configuration.processor)
