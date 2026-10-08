@@ -21,6 +21,7 @@ spring-boot-starter-liquibase = { group = "org.springframework.boot", name = "sp
 
 #Spring Cloud
 spring-cloud = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }
+spring-cloud-openfeign = { group = "org.springframework.cloud", name = "spring-cloud-starter-openfeign" }
 
 #Lombok
 projectlombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
