@@ -23,6 +23,7 @@ dependencies {
     implementation(platform(libs.spring.cloud))
     implementation(libs.spring.cloud.openfeign)
     implementation(libs.spring.boot.starter.data.jpa)
+    implementation(libs.spring.boot.starter.web)
     developmentOnly(libs.spring.boot.devtools)
     annotationProcessor(libs.spring.boot.configuration.processor)
     compileOnly(libs.projectlombok)
