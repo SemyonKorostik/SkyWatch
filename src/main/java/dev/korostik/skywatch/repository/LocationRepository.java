@@ -16,7 +16,7 @@ public interface LocationRepository extends CrudRepository<Location, Long> {
       ORDER BY l.geog <-> ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography
       LIMIT 1
       """)
-  Optional<Location> findNearestByLatitudeAndLongitude(Double latitude, Double longitude,
-      Integer radius);
+  Optional<Location> findNearestByLatitudeAndLongitude(double latitude, double longitude,
+      int radius);
 
 }

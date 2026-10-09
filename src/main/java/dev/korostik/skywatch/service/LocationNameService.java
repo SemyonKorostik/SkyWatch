@@ -10,7 +10,6 @@ import dev.korostik.skywatch.repository.LocationNameRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,14 +22,15 @@ public class LocationNameService {
     return locationNameRepository.findById(id);
   }
 
-  //  как назвать этот метод?
-  public LocationName map(GeoNameDto geoNameDto, Location location, Language language) {
+  public LocationName mapToEntity(GeoNameDto geoNameDto, Location location, Language language) {
+    if (location.getId() == null) {
+      throw new IllegalStateException("Location must be persisted before mapping name");
+    }
     LocationName locationName = locationNameMapper.mapToEntity(geoNameDto);
-    locationName.setId(new LocationNameId(location.getId(), language.name()));
+    locationName.setId(new LocationNameId(location.getId(), language));
     return locationName;
   }
 
-  @Transactional
   public LocationName save(LocationName locationName) {
     return locationNameRepository.save(locationName);
   }

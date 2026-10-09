@@ -26,6 +26,8 @@ dependencies {
     implementation(libs.spring.boot.starter.web)
     developmentOnly(libs.spring.boot.devtools)
     annotationProcessor(libs.spring.boot.configuration.processor)
+    annotationProcessor(libs.mapsrtruct.processor)
+    annotationProcessor(libs.lombok.mapstruct.binding)
     compileOnly(libs.projectlombok)
     compileOnly(libs.mapsrtruct)
     annotationProcessor(libs.projectlombok)

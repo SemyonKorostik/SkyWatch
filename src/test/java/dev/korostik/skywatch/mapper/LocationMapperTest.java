@@ -10,20 +10,15 @@ import dev.korostik.skywatch.entities.Location;
 import java.time.DateTimeException;
 import java.time.ZoneId;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 
 class LocationMapperTest {
 
-  private final LocationMapper mapper = Mappers.getMapper(LocationMapper.class);
+  private final LocationMapper mapper = new LocationMapperImpl();
 
   @Test
-  void mapToEntity() {
+  void mapToEntity_mapsAllFields() {
     GeoNameDto dto = new GeoNameDto(
-        "Minsk",
-        53.9045,
-        27.5615,
-        "Belarus",
-        "P", "PPL",
+        "Minsk", 53.9045, 27.5615, "Belarus", "P", "PPL",
         new TimeZoneDto(3, "Europe/Minsk", 3)
     );
 
@@ -32,17 +27,52 @@ class LocationMapperTest {
     assertNull(result.getId());
     assertNull(result.getCreatedAt());
     assertNull(result.getUpdatedAt());
-    assertEquals(dto.latitude(), result.getLatitude());
-    assertEquals(dto.longitude(), result.getLongitude());
+    assertEquals(53.9045, result.getLatitude());
+    assertEquals(27.5615, result.getLongitude());
     assertEquals(ZoneId.of("Europe/Minsk"), result.getTimeZoneId());
   }
 
   @Test
-  void mapToEntity_invalidTimeZone_throwsException() {
+  void mapToEntity_nullTimeZone_returnsNullZoneId() {
     GeoNameDto dto = new GeoNameDto(
-        "Minsk", 53.9045, 27.5615, "Belarus", "P", "PPL",
-        new TimeZoneDto(99, "Invalid/Zone", 99)
+        "Minsk", 53.9045, 27.5615, "Belarus", "P", "PPL", null
     );
-    assertThrows(DateTimeException.class, () -> mapper.mapToEntity(dto));
+
+    Location result = mapper.mapToEntity(dto);
+
+    assertNull(result.getTimeZoneId());
   }
+
+  @Test
+  void mapToEntity_nullDto_returnsNull() {
+    assertNull(mapper.mapToEntity(null));
+  }
+
+  @Test
+  void mapToEntity_extremeCoordinates_mapsCorrectly() {
+    GeoNameDto dto = new GeoNameDto(
+        "Extreme", -90.0, -180.0, "Land", "P", "PPL",
+        new TimeZoneDto(0, "UTC", 0)
+    );
+
+    Location result = mapper.mapToEntity(dto);
+
+    assertEquals(-90.0, result.getLatitude());
+    assertEquals(-180.0, result.getLongitude());
+    assertEquals(ZoneId.of("UTC"), result.getTimeZoneId());
+  }
+
+  @Test
+  void mapToEntity_nullLatitudeAndLongitude_mapsNull() {
+    GeoNameDto dto = new GeoNameDto(
+        "Nowhere", null, null, "Land", "P", "PPL",
+        new TimeZoneDto(0, "UTC", 0)
+    );
+
+    Location result = mapper.mapToEntity(dto);
+
+    assertNull(result.getLatitude());
+    assertNull(result.getLongitude());
+  }
+
 }

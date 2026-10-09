@@ -1,7 +1,10 @@
 package dev.korostik.skywatch.entities;
 
+import dev.korostik.skywatch.enums.Language;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import java.io.Serializable;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -25,8 +28,9 @@ public class LocationNameId implements Serializable {
   @Column(name = "location_id", nullable = false)
   private Long locationId;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "language", nullable = false, length = 2)
-  private String language;
+  private Language language;
 
   @Override
   public boolean equals(Object o) {

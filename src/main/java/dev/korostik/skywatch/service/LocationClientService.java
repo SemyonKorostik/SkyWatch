@@ -26,7 +26,7 @@ public class LocationClientService {
   public LocationName findOrCreateLocationName(Double latitude, Double longitude, Language language) {
     return locationService.getNearest(latitude, longitude)
         .map(location -> {
-          LocationNameId id = new LocationNameId(location.getId(), language.name());
+          LocationNameId id = new LocationNameId(location.getId(), language);
           return locationNameService.findById(id)
               .orElseGet(() -> createLocationNameOnly(location, language));
         })
@@ -37,13 +37,13 @@ public class LocationClientService {
     GeoNameDto dto = fetchLocationDto(latitude, longitude, language);
     Location mappedLocation = locationService.map(dto);
     Location savedLocation = locationService.save(mappedLocation);
-    LocationName mappedLocationName = locationNameService.map(dto, savedLocation, language);
+    LocationName mappedLocationName = locationNameService.mapToEntity(dto, savedLocation, language);
     return locationNameService.save(mappedLocationName);
   }
 
   private LocationName createLocationNameOnly(Location location, Language language) {
     GeoNameDto dto = fetchLocationDto(location.getLatitude(), location.getLongitude(), language);
-    LocationName mappedLocationName = locationNameService.map(dto, location, language);
+    LocationName mappedLocationName = locationNameService.mapToEntity(dto, location, language);
     return locationNameService.save(mappedLocationName);
   }
 

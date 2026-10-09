@@ -5,31 +5,35 @@ import dev.korostik.skywatch.entities.Location;
 import dev.korostik.skywatch.mapper.LocationMapper;
 import dev.korostik.skywatch.repository.LocationRepository;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class LocationService {
 
-  @Value("${app.location.search-radius-meters}")
-  private Integer SEARCH_RADIUS_METERS;
-
+  private final int searchRadiusMeters;
   private final LocationMapper locationMapper;
   private final LocationRepository locationRepository;
 
+  public LocationService(LocationMapper locationMapper, LocationRepository locationRepository,
+      @Value("${app.location.search-radius-meters}") int searchRadiusMeters) {
+    this.locationMapper = locationMapper;
+    this.locationRepository = locationRepository;
+    this.searchRadiusMeters = searchRadiusMeters;
+  }
+
   public Optional<Location> getNearest(Double latitude, Double longitude) {
+    if (searchRadiusMeters <= 0) {
+      throw new IllegalArgumentException("Search radius must be greater than 0");
+    }
     return locationRepository.findNearestByLatitudeAndLongitude(latitude, longitude,
-        SEARCH_RADIUS_METERS);
+        searchRadiusMeters);
   }
 
   public Location map(GeoNameDto dto) {
     return locationMapper.mapToEntity(dto);
   }
 
-  @Transactional
   public Location save(Location location) {
     return locationRepository.save(location);
   }
