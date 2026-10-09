@@ -36,6 +36,7 @@ dependencies {
     testImplementation(libs.spring.boot.testcontainers)
     testImplementation(libs.spring.boot.starter.test)
     testImplementation(libs.testcontainers.postgresql)
+    testImplementation(libs.mapsrtruct)
     testCompileOnly(libs.projectlombok)
     testAnnotationProcessor(libs.projectlombok)
     testRuntimeOnly(libs.junit.platform.launcher)
