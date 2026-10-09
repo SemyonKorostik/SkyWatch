@@ -1,6 +1,7 @@
 package dev.korostik.skywatch.entities;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.time.ZoneId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +18,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters.LocalDateTimeConverter;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters.ZoneIdConverter;
 
 @Builder
 @AllArgsConstructor
@@ -40,8 +44,9 @@ public class Location {
   @Column(name = "longitude", nullable = false)
   private Double longitude;
 
+  @Convert(converter = ZoneIdConverter.class)
   @Column(name = "time_zone_id", nullable = false)
-  private String timeZoneId;
+  private ZoneId timeZoneId;
 
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
