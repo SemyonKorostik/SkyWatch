@@ -12,3 +12,12 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
+app:
+  geonames:
+    username: ${GEONAMES_USERNAME}
+    style: FULL
+    inside-boundary: TRUE
+    geo-name-source: cities500
+    max-rows: 1
+  location:
+    search-radius-meters: 5000
