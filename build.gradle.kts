@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.spring.cloud.openfeign)
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.boot.starter.validation)
     developmentOnly(libs.spring.boot.devtools)
     annotationProcessor(libs.spring.boot.configuration.processor)
     compileOnly(libs.projectlombok)
