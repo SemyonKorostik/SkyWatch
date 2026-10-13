@@ -14,7 +14,7 @@ spring:
     show-sql: true
 app:
   geonames:
-    username: ${GEONAMES_USERNAME}
+    username: ${GEONAMES_USERNAME:}
     style: FULL
     inside-boundary: TRUE
     geo-name-source: cities500
