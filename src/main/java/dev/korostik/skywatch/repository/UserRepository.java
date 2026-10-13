@@ -1,0 +1,13 @@
+package dev.korostik.skywatch.repository;
+
+import dev.korostik.skywatch.entities.User;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends CrudRepository<User, Long> {
+
+  boolean existsByChatId(Long chatId);
+
+  User getByChatId(Long chatId);
+}

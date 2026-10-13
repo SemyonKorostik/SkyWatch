@@ -1,4 +1,4 @@
-package dev.korostik.skywatch.service;
+package dev.korostik.skywatch.service.location;
 
 import dev.korostik.skywatch.dto.geonames.GeoNameDto;
 import dev.korostik.skywatch.entities.Location;
@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LocationService {
+public class LocationServiceImpl implements LocationService {
 
   private final int searchRadiusMeters;
   private final LocationMapper locationMapper;
   private final LocationRepository locationRepository;
 
-  public LocationService(LocationMapper locationMapper, LocationRepository locationRepository,
+  public LocationServiceImpl(LocationMapper locationMapper, LocationRepository locationRepository,
       @Value("${app.location.search-radius-meters}") int searchRadiusMeters) {
     this.locationMapper = locationMapper;
     this.locationRepository = locationRepository;

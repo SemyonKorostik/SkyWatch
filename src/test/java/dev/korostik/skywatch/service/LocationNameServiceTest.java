@@ -16,6 +16,7 @@ import dev.korostik.skywatch.entities.LocationNameId;
 import dev.korostik.skywatch.enums.Language;
 import dev.korostik.skywatch.mapper.LocationNameMapper;
 import dev.korostik.skywatch.repository.LocationNameRepository;
+import dev.korostik.skywatch.service.location.LocationNameServiceImpl;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +37,7 @@ class LocationNameServiceTest {
   private LocationNameRepository locationNameRepository;
 
   @InjectMocks
-  private LocationNameService locationNameService;
+  private LocationNameServiceImpl locationNameService;
 
   @Test
   void findById_whenExists_thenReturnsLocationName() {

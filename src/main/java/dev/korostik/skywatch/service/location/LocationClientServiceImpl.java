@@ -1,4 +1,4 @@
-package dev.korostik.skywatch.service;
+package dev.korostik.skywatch.service.location;
 
 import dev.korostik.skywatch.client.LocationApiClientProxy;
 import dev.korostik.skywatch.dto.geonames.GeoNameDto;
@@ -12,19 +12,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class LocationClientService {
+public class LocationClientServiceImpl implements LocationClientService {
 
   private final LocationService locationService;
   private final LocationNameService locationNameService;
   private final LocationApiClientProxy locationApiClientProxy;
 
   /**
-   * Возвращает имя локации для заданных координат и языка.
-   * Если локация ближайшая не найдена – создаёт новую локацию и её имя.
-   * Если локация найдена, но имя на нужном языке отсутствует – создаёт только имя.
+   * Возвращает имя локации для заданных координат и языка. Если локация ближайшая не найдена –
+   * создаёт новую локацию и её имя. Если локация найдена, но имя на нужном языке отсутствует –
+   * создаёт только имя.
    */
   @Transactional
-  public LocationName findOrCreateLocationName(Double latitude, Double longitude, Language language) {
+  @Override
+  public LocationName findOrCreateLocationName(Double latitude, Double longitude,
+      Language language) {
     return locationService.getNearest(latitude, longitude)
         .map(location -> {
           LocationNameId id = new LocationNameId(location.getId(), language);

@@ -14,6 +14,7 @@ import dev.korostik.skywatch.dto.geonames.TimeZoneDto;
 import dev.korostik.skywatch.entities.Location;
 import dev.korostik.skywatch.mapper.LocationMapper;
 import dev.korostik.skywatch.repository.LocationRepository;
+import dev.korostik.skywatch.service.location.LocationServiceImpl;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,11 +35,11 @@ class LocationServiceTest {
   @Mock
   private LocationRepository locationRepository;
 
-  private LocationService locationService;
+  private LocationServiceImpl locationService;
 
   @BeforeEach
   void setUp() {
-    locationService = new LocationService(locationMapper, locationRepository, RADIUS);
+    locationService = new LocationServiceImpl(locationMapper, locationRepository, RADIUS);
   }
 
   @Test
@@ -79,7 +80,7 @@ class LocationServiceTest {
 
   @Test
   void getNearest_whenRadiusZero_thenThrowsException() {
-    locationService = new LocationService(locationMapper, locationRepository, 0);
+    locationService = new LocationServiceImpl(locationMapper, locationRepository, 0);
 
     assertThrows(IllegalArgumentException.class, () -> locationService.getNearest(LAT, LON));
     verifyNoInteractions(locationRepository);
@@ -87,7 +88,7 @@ class LocationServiceTest {
 
   @Test
   void getNearest_whenRadiusNegative_thenThrowsException() {
-    locationService = new LocationService(locationMapper, locationRepository, -1);
+    locationService = new LocationServiceImpl(locationMapper, locationRepository, -1);
 
     assertThrows(IllegalArgumentException.class, () -> locationService.getNearest(LAT, LON));
     verifyNoInteractions(locationRepository);

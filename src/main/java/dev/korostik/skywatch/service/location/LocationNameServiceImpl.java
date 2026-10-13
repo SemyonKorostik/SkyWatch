@@ -1,4 +1,4 @@
-package dev.korostik.skywatch.service;
+package dev.korostik.skywatch.service.location;
 
 import dev.korostik.skywatch.dto.geonames.GeoNameDto;
 import dev.korostik.skywatch.entities.Location;
@@ -13,15 +13,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class LocationNameService {
+public class LocationNameServiceImpl implements LocationNameService {
 
   private final LocationNameMapper locationNameMapper;
   private final LocationNameRepository locationNameRepository;
 
+  @Override
   public Optional<LocationName> findById(LocationNameId id) {
     return locationNameRepository.findById(id);
   }
 
+  @Override
   public LocationName mapToEntity(GeoNameDto geoNameDto, Location location, Language language) {
     if (location.getId() == null) {
       throw new IllegalStateException("Location must be persisted before mapping name");
@@ -32,6 +34,7 @@ public class LocationNameService {
     return locationName;
   }
 
+  @Override
   public LocationName save(LocationName locationName) {
     return locationNameRepository.save(locationName);
   }

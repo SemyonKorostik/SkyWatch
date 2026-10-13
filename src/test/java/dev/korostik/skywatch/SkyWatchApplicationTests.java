@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import dev.korostik.skywatch.config.TestContainerConfiguration;
 import dev.korostik.skywatch.mapper.LocationMapper;
-import dev.korostik.skywatch.service.LocationService;
+import dev.korostik.skywatch.service.location.LocationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
 class SkyWatchApplicationTests {
 
   @Autowired
-  private LocationService locationService;
+  private LocationServiceImpl locationService;
 
   @Autowired
   private LocationMapper locationMapper;

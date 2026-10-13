@@ -1,7 +1,10 @@
 package dev.korostik.skywatch.entities;
 
+import dev.korostik.skywatch.enums.ForecastApiProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -23,7 +26,8 @@ public class WeatherProvider {
 
   @Id
   @Column(name = "name", nullable = false)
-  private String name;
+  @Enumerated(value = EnumType.STRING)
+  private ForecastApiProvider provider;
 
   @Column(name = "api_url", nullable = false)
   private String apiUrl;
