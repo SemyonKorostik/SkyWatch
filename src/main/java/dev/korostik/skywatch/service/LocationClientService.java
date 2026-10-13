@@ -8,10 +8,10 @@ import dev.korostik.skywatch.entities.LocationNameId;
 import dev.korostik.skywatch.enums.Language;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-//сервис нуждается в рефакторинге
 public class LocationClientService {
 
   private final LocationService locationService;
@@ -23,6 +23,7 @@ public class LocationClientService {
    * Если локация ближайшая не найдена – создаёт новую локацию и её имя.
    * Если локация найдена, но имя на нужном языке отсутствует – создаёт только имя.
    */
+  @Transactional
   public LocationName findOrCreateLocationName(Double latitude, Double longitude, Language language) {
     return locationService.getNearest(latitude, longitude)
         .map(location -> {
