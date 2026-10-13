@@ -43,14 +43,14 @@ class LocationApiClientProxyTest {
     Optional<LocationResponse<List<GeoNameDto>>> response = Optional.of(
         new LocationResponse<>(List.of(dto)));
 
-    when(locationApiClient.fetch(LAT, LON, Language.EN, true, GeoNamesStyle.FULL,
+    when(locationApiClient.fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser")).thenReturn(response);
 
     Optional<GeoNameDto> result = proxy.fetch(LAT, LON, Language.EN);
 
     assertTrue(result.isPresent());
     assertSame(dto, result.get());
-    verify(locationApiClient).fetch(LAT, LON, Language.EN, true, GeoNamesStyle.FULL,
+    verify(locationApiClient).fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser");
   }
 
@@ -59,13 +59,13 @@ class LocationApiClientProxyTest {
     Optional<LocationResponse<List<GeoNameDto>>> response = Optional.of(
         new LocationResponse<>(List.of()));
 
-    when(locationApiClient.fetch(LAT, LON, Language.EN, true, GeoNamesStyle.FULL,
+    when(locationApiClient.fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser")).thenReturn(response);
 
     Optional<GeoNameDto> result = proxy.fetch(LAT, LON, Language.EN);
 
     assertFalse(result.isPresent());
-    verify(locationApiClient).fetch(LAT, LON, Language.EN, true, GeoNamesStyle.FULL,
+    verify(locationApiClient).fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser");
   }
 

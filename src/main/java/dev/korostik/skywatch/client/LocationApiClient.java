@@ -4,7 +4,6 @@ import dev.korostik.skywatch.dto.geonames.GeoNameDto;
 import dev.korostik.skywatch.dto.geonames.LocationResponse;
 import dev.korostik.skywatch.enums.GeoNamesSource;
 import dev.korostik.skywatch.enums.GeoNamesStyle;
-import dev.korostik.skywatch.enums.Language;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -17,10 +16,10 @@ public interface LocationApiClient {
   @GetMapping("/findNearbyPlaceNameJSON")
   Optional<LocationResponse<List<GeoNameDto>>> fetch(@RequestParam("lat") Double latitude,
       @RequestParam("lng") Double longitude,
-      @RequestParam("lang") Language language,
+      @RequestParam("lang") String language,
       @RequestParam("localCountry") Boolean insideBoundary,
-      @RequestParam GeoNamesStyle style,
+      @RequestParam("style") GeoNamesStyle style,
       @RequestParam("cities") GeoNamesSource geoNamesSource,
-      @RequestParam("maxRowsCount") Integer maxRowsCount,
-      @RequestParam String userName);
+      @RequestParam("maxRows") Integer maxRowsCount,
+      @RequestParam("username") String userName);
 }

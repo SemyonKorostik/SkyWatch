@@ -5,6 +5,7 @@ import dev.korostik.skywatch.enums.GeoNamesSource;
 import dev.korostik.skywatch.enums.GeoNamesStyle;
 import dev.korostik.skywatch.enums.Language;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,8 +39,9 @@ public class LocationApiClientProxy {
     this.locationApiClient = locationApiClient;
   }
 
-  public Optional<@Valid GeoNameDto> fetch(Double latitude, Double longitude, Language language) {
-    return locationApiClient.fetch(latitude, longitude, language, insideBoundary, style,
+  public Optional<@Valid GeoNameDto> fetch(@NotNull Double latitude, @NotNull Double longitude,
+      @NotNull Language language) {
+    return locationApiClient.fetch(latitude, longitude, language.name(), insideBoundary, style,
             geoNamesSource, maxRowsCount, userName)
         .flatMap(x -> x.geonames().stream().findFirst());
   }
