@@ -137,7 +137,7 @@ class HourlyWeatherMapperTest extends MapperTestBase {
     class ToDtoTests {
 
         @Test
-        @DisplayName("Should reverse map: Instant -> LocalDateTime, WeatherCondition -> providerCode, rename fields")
+        @DisplayName("Should reverse map: Instant -> LocalDateTime (in location ZoneId), WeatherCondition -> providerCode, rename fields")
         void toHourlyData_happyPath_reverseMaps() {
             WeatherCondition cond = conditionMap.get(PROVIDER_CODE_SNOW);
             HourlyWeather entity = TestData.entity(expectedInstant, cond);
@@ -149,10 +149,8 @@ class HourlyWeatherMapperTest extends MapperTestBase {
             // Ignored in reverse
             assertThat(dto.apparentTemperature()).isNull();
 
-            // Time conversion: Instant -> LocalDateTime (default zone? Mapper uses LocalDateTime.from(instant) -> UTC usually, но в маппере default LocalDateTime mapDate(Instant) -> LocalDateTime.from(date) -> это UTC!)
-            // ВНИМАНИЕ: В маппере `default LocalDateTime mapDate(Instant date) { return LocalDateTime.from(date); }` — это UTC!
-            // А в toEntity использовался ZoneId локации. Это несимметрично. Тест проверяет ТЕКУЩЕЕ поведение маппера.
-            assertThat(dto.time()).isEqualTo(LocalDateTime.from(expectedInstant)); // UTC time
+            // Time conversion: Instant -> LocalDateTime in location ZoneId
+            assertThat(dto.time()).isEqualTo(testDateTime); 
 
             assertThat(dto.weatherCode()).isEqualTo(PROVIDER_CODE_SNOW); // expression
 
@@ -179,8 +177,9 @@ class HourlyWeatherMapperTest extends MapperTestBase {
             List<HourlyData> dtos = hourlyWeatherMapper.toHourlyDataList(entities);
 
             assertThat(dtos).hasSize(2);
-            // Проверяем UTC конвертацию
-            assertThat(dtos.get(0).time()).isEqualTo(LocalDateTime.from(expectedInstant));
+            // Проверяем конвертацию в ZoneId локации
+            assertThat(dtos.get(0).time()).isEqualTo(testDateTime);
+            assertThat(dtos.get(1).time()).isEqualTo(testDateTime.plusHours(1));
         }
 
         @Test

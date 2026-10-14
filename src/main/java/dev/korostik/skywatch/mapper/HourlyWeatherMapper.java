@@ -33,7 +33,7 @@ public interface HourlyWeatherMapper {
         : dateTime.atZone(location.getTimeZoneId().normalized()).toInstant();
   }
 
-  @Mapping(target = "time", expression = "java(mapDate(hourlyWeather.getId().getTime()))")
+  @Mapping(target = "time", expression = "java(mapDate(hourlyWeather.getId().getTime(), hourlyWeather.getLocation()))")
   @Mapping(target = "relativeHumidity", source = "humidity")
   @Mapping(target = "surfacePressure", source = "pressure")
   @Mapping(target = "apparentTemperature", ignore = true)
@@ -42,8 +42,9 @@ public interface HourlyWeatherMapper {
 
   List<HourlyData> toHourlyDataList(List<HourlyWeather> hourlyWeather);
 
-  default LocalDateTime mapDate(Instant date) {
-    return date == null ? null : LocalDateTime.from(date);
+  default LocalDateTime mapDate(Instant date, Location location) {
+    return date == null || location == null ? null
+        : date.atZone(location.getTimeZoneId().normalized()).toLocalDateTime();
   }
 
 }

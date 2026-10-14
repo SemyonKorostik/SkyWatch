@@ -37,13 +37,14 @@ public interface DailyWeatherMapper {
         : date.atStartOfDay(location.getTimeZoneId().normalized()).toInstant();
   }
 
-  @Mapping(target = "date", expression = "java(mapDate(dailyWeather.getId().getDate()))")
+  @Mapping(target = "date", expression = "java(mapDate(dailyWeather.getId().getDate(), dailyWeather.getLocation()))")
   @Mapping(target = "weatherCode", expression = "java(dailyWeather.getWeatherCondition().getProviderCode())")
   DailyData toDailyData(DailyWeather dailyWeather);
 
   List<DailyData> toDailyDataList(List<DailyWeather> dailyWeather);
 
-  default LocalDate mapDate(Instant date) {
-    return date == null ? null : LocalDate.from(date);
+  default LocalDate mapDate(Instant date, Location location) {
+    return date == null || location == null ? null
+        : date.atZone(location.getTimeZoneId().normalized()).toLocalDate();
   }
 }
