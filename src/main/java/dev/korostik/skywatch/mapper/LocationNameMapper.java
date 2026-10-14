@@ -1,7 +1,7 @@
 package dev.korostik.skywatch.mapper;
 
 import dev.korostik.skywatch.dto.geonames.GeoNameDto;
-import dev.korostik.skywatch.entities.LocationName;
+import dev.korostik.skywatch.entities.location.LocationName;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

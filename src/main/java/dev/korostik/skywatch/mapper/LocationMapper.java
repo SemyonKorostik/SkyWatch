@@ -2,7 +2,7 @@ package dev.korostik.skywatch.mapper;
 
 import dev.korostik.skywatch.dto.geonames.GeoNameDto;
 import dev.korostik.skywatch.dto.geonames.TimeZoneDto;
-import dev.korostik.skywatch.entities.Location;
+import dev.korostik.skywatch.entities.location.Location;
 import java.time.ZoneId;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

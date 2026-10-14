@@ -1,7 +1,7 @@
 package dev.korostik.skywatch.repository;
 
-import dev.korostik.skywatch.entities.WeatherCondition;
-import dev.korostik.skywatch.entities.WeatherProvider;
+import dev.korostik.skywatch.entities.reference.WeatherCondition;
+import dev.korostik.skywatch.entities.reference.WeatherProvider;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;

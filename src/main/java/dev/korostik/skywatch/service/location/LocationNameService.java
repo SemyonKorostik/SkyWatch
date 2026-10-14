@@ -1,9 +1,9 @@
 package dev.korostik.skywatch.service.location;
 
 import dev.korostik.skywatch.dto.geonames.GeoNameDto;
-import dev.korostik.skywatch.entities.Location;
-import dev.korostik.skywatch.entities.LocationName;
-import dev.korostik.skywatch.entities.LocationNameId;
+import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.entities.location.LocationName;
+import dev.korostik.skywatch.entities.location.LocationNameId;
 import dev.korostik.skywatch.enums.Language;
 import java.util.Optional;
 

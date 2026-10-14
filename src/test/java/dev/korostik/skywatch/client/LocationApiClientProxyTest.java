@@ -1,8 +1,7 @@
 package dev.korostik.skywatch.client;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,6 +12,7 @@ import dev.korostik.skywatch.enums.GeoNamesSource;
 import dev.korostik.skywatch.enums.GeoNamesStyle;
 import dev.korostik.skywatch.enums.Language;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,13 +26,13 @@ class LocationApiClientProxyTest {
   public static final double LAT = 53.9045;
   public static final double LON = 27.5615;
   @Mock
-  private LocationApiClient locationApiClient;
+  private GeoNamesApiClient locationApiClient;
 
-  private LocationApiClientProxy proxy;
+  private GeoNamesApiAdapter proxy;
 
   @BeforeEach
   void setUp() {
-    proxy = new LocationApiClientProxy("testuser", GeoNamesStyle.FULL, true,
+    proxy = new GeoNamesApiAdapter("testuser", GeoNamesStyle.FULL, true,
         GeoNamesSource.CITIES_500, 1, locationApiClient);
   }
 
@@ -46,10 +46,9 @@ class LocationApiClientProxyTest {
     when(locationApiClient.fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser")).thenReturn(response);
 
-    Optional<GeoNameDto> result = proxy.fetch(LAT, LON, Language.EN);
+    GeoNameDto result = proxy.fetch(LAT, LON, Language.EN);
 
-    assertTrue(result.isPresent());
-    assertSame(dto, result.get());
+    assertSame(dto, result);
     verify(locationApiClient).fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser");
   }
@@ -62,9 +61,7 @@ class LocationApiClientProxyTest {
     when(locationApiClient.fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser")).thenReturn(response);
 
-    Optional<GeoNameDto> result = proxy.fetch(LAT, LON, Language.EN);
-
-    assertFalse(result.isPresent());
+    assertThrows(NoSuchElementException.class, () -> proxy.fetch(LAT, LON, Language.EN));
     verify(locationApiClient).fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser");
   }

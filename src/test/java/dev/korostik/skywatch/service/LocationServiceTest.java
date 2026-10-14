@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 
 import dev.korostik.skywatch.dto.geonames.GeoNameDto;
 import dev.korostik.skywatch.dto.geonames.TimeZoneDto;
-import dev.korostik.skywatch.entities.Location;
+import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.mapper.LocationMapper;
 import dev.korostik.skywatch.repository.LocationRepository;
 import dev.korostik.skywatch.service.location.LocationServiceImpl;

@@ -1,9 +1,9 @@
 package dev.korostik.skywatch.mapper;
 
-import dev.korostik.skywatch.dto.weather.DailyData;
-import dev.korostik.skywatch.entities.DailyWeather;
-import dev.korostik.skywatch.entities.Location;
-import dev.korostik.skywatch.entities.WeatherCondition;
+import dev.korostik.skywatch.dto.weather.transit.DailyData;
+import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.entities.reference.WeatherCondition;
+import dev.korostik.skywatch.entities.weather.DailyWeather;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -37,4 +37,13 @@ public interface DailyWeatherMapper {
         : date.atStartOfDay(location.getTimeZoneId().normalized()).toInstant();
   }
 
+  @Mapping(target = "date", expression = "java(mapDate(dailyWeather.getId().getDate()))")
+  @Mapping(target = "weatherCode", expression = "java(dailyWeather.getWeatherCondition().getProviderCode())")
+  DailyData toDailyData(DailyWeather dailyWeather);
+
+  List<DailyData> toDailyDataList(List<DailyWeather> dailyWeather);
+
+  default LocalDate mapDate(Instant date) {
+    return date == null ? null : LocalDate.from(date);
+  }
 }

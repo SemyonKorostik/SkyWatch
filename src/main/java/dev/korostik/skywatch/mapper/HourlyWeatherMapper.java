@@ -1,9 +1,9 @@
 package dev.korostik.skywatch.mapper;
 
-import dev.korostik.skywatch.dto.weather.HourlyData;
-import dev.korostik.skywatch.entities.HourlyWeather;
-import dev.korostik.skywatch.entities.Location;
-import dev.korostik.skywatch.entities.WeatherCondition;
+import dev.korostik.skywatch.dto.weather.transit.HourlyData;
+import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.entities.reference.WeatherCondition;
+import dev.korostik.skywatch.entities.weather.HourlyWeather;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +31,19 @@ public interface HourlyWeatherMapper {
   default Instant mapDate(LocalDateTime dateTime, Location location) {
     return dateTime == null ? null
         : dateTime.atZone(location.getTimeZoneId().normalized()).toInstant();
+  }
+
+  @Mapping(target = "time", expression = "java(mapDate(hourlyWeather.getId().getTime()))")
+  @Mapping(target = "relativeHumidity", source = "humidity")
+  @Mapping(target = "surfacePressure", source = "pressure")
+  @Mapping(target = "apparentTemperature", ignore = true)
+  @Mapping(target = "weatherCode", expression = "java(hourlyWeather.getWeatherCondition().getProviderCode())")
+  HourlyData toHourlyData(HourlyWeather hourlyWeather);
+
+  List<HourlyData> toHourlyDataList(List<HourlyWeather> hourlyWeather);
+
+  default LocalDateTime mapDate(Instant date) {
+    return date == null ? null : LocalDateTime.from(date);
   }
 
 }

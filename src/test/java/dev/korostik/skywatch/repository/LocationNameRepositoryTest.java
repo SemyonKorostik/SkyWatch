@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import dev.korostik.skywatch.config.TestContainerConfiguration;
-import dev.korostik.skywatch.entities.Location;
-import dev.korostik.skywatch.entities.LocationName;
-import dev.korostik.skywatch.entities.LocationNameId;
+import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.entities.location.LocationName;
+import dev.korostik.skywatch.entities.location.LocationNameId;
 import dev.korostik.skywatch.enums.Language;
 import java.time.ZoneId;
 import java.util.List;

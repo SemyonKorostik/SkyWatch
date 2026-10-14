@@ -1,6 +1,6 @@
 package dev.korostik.skywatch.client;
 
-import dev.korostik.skywatch.dto.weather.ForecastResponse;
+import dev.korostik.skywatch.dto.weather.external.ForecastResponse;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

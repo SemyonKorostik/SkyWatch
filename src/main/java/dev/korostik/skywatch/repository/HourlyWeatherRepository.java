@@ -1,7 +1,7 @@
 package dev.korostik.skywatch.repository;
 
-import dev.korostik.skywatch.entities.HourlyWeather;
-import dev.korostik.skywatch.entities.HourlyWeatherId;
+import dev.korostik.skywatch.entities.weather.HourlyWeather;
+import dev.korostik.skywatch.entities.weather.HourlyWeatherId;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 

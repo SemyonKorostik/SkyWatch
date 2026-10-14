@@ -1,6 +1,6 @@
 package dev.korostik.skywatch.service.weather;
 
-import dev.korostik.skywatch.entities.WeatherCondition;
+import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.enums.ForecastApiProvider;
 import dev.korostik.skywatch.repository.WeatherConditionRepository;
 import java.util.Map;

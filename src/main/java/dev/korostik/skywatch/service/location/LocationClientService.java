@@ -1,6 +1,6 @@
 package dev.korostik.skywatch.service.location;
 
-import dev.korostik.skywatch.entities.LocationName;
+import dev.korostik.skywatch.entities.location.LocationName;
 import dev.korostik.skywatch.enums.Language;
 
 public interface LocationClientService {

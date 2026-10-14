@@ -5,13 +5,13 @@ import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.entities.reference.WeatherProvider;
 import dev.korostik.skywatch.entities.reference.WmoWeatherCode;
 import dev.korostik.skywatch.enums.ForecastApiProvider;
-import org.mapstruct.factory.Mappers;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
+import org.mapstruct.factory.Mappers;
 
 public abstract class MapperTestBase {
 
@@ -55,9 +55,11 @@ public abstract class MapperTestBase {
                 .provider(ForecastApiProvider.OPEN_METEO)
                 .build();
 
-        WmoWeatherCode wmoClear = WmoWeatherCode.builder().id(0L).description("Clear sky").build();
-        WmoWeatherCode wmoRain = WmoWeatherCode.builder().id(61L).description("Rain").build();
-        WmoWeatherCode wmoSnow = WmoWeatherCode.builder().id(71L).description("Snow fall").build();
+        WmoWeatherCode wmoClear = WmoWeatherCode.builder().code("000").description("Clear sky")
+            .build();
+        WmoWeatherCode wmoRain = WmoWeatherCode.builder().code("061").description("Rain").build();
+        WmoWeatherCode wmoSnow = WmoWeatherCode.builder().code("071").description("Snow fall")
+            .build();
 
         map.put(PROVIDER_CODE_CLEAR, WeatherCondition.builder()
                 .id(10L)

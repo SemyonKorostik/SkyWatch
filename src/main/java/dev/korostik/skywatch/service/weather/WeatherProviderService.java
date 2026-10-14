@@ -1,6 +1,6 @@
 package dev.korostik.skywatch.service.weather;
 
-import dev.korostik.skywatch.entities.WeatherProvider;
+import dev.korostik.skywatch.entities.reference.WeatherProvider;
 import dev.korostik.skywatch.enums.ForecastApiProvider;
 import java.util.List;
 

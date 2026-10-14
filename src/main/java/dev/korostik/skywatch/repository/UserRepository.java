@@ -1,6 +1,6 @@
 package dev.korostik.skywatch.repository;
 
-import dev.korostik.skywatch.entities.User;
+import dev.korostik.skywatch.entities.user.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

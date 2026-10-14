@@ -1,6 +1,6 @@
 package dev.korostik.skywatch.repository;
 
-import dev.korostik.skywatch.entities.CurrentWeather;
+import dev.korostik.skywatch.entities.weather.CurrentWeather;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

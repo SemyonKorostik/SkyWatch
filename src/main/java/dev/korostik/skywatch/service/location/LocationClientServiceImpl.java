@@ -1,10 +1,10 @@
 package dev.korostik.skywatch.service.location;
 
-import dev.korostik.skywatch.client.LocationApiClientProxy;
+import dev.korostik.skywatch.client.GeoNamesApiAdapter;
 import dev.korostik.skywatch.dto.geonames.GeoNameDto;
-import dev.korostik.skywatch.entities.Location;
-import dev.korostik.skywatch.entities.LocationName;
-import dev.korostik.skywatch.entities.LocationNameId;
+import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.entities.location.LocationName;
+import dev.korostik.skywatch.entities.location.LocationNameId;
 import dev.korostik.skywatch.enums.Language;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class LocationClientServiceImpl implements LocationClientService {
 
   private final LocationService locationService;
   private final LocationNameService locationNameService;
-  private final LocationApiClientProxy locationApiClientProxy;
+  private final GeoNamesApiAdapter locationApiClientProxy;
 
   /**
    * Возвращает имя локации для заданных координат и языка. Если локация ближайшая не найдена –
@@ -37,7 +37,7 @@ public class LocationClientServiceImpl implements LocationClientService {
   }
 
   private LocationName createLocationAndName(Double latitude, Double longitude, Language language) {
-    GeoNameDto dto = fetchLocationDto(latitude, longitude, language);
+    GeoNameDto dto = locationApiClientProxy.fetch(latitude, longitude, language);
     Location mappedLocation = locationService.map(dto);
     Location savedLocation = locationService.save(mappedLocation);
     LocationName mappedLocationName = locationNameService.mapToEntity(dto, savedLocation, language);
@@ -45,14 +45,10 @@ public class LocationClientServiceImpl implements LocationClientService {
   }
 
   private LocationName createLocationNameOnly(Location location, Language language) {
-    GeoNameDto dto = fetchLocationDto(location.getLatitude(), location.getLongitude(), language);
+    GeoNameDto dto = locationApiClientProxy.fetch(location.getLatitude(), location.getLongitude(),
+        language);
     LocationName mappedLocationName = locationNameService.mapToEntity(dto, location, language);
     return locationNameService.save(mappedLocationName);
   }
 
-  private GeoNameDto fetchLocationDto(Double latitude, Double longitude, Language language) {
-    return locationApiClientProxy.fetch(latitude, longitude, language)
-        .orElseThrow(() -> new IllegalStateException(
-            "Couldn't find a location for those coordinates."));
-  }
 }
