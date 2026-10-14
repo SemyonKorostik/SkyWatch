@@ -1,27 +1,27 @@
 package dev.korostik.skywatch.mapper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+
 import dev.korostik.skywatch.dto.weather.transit.HourlyData;
+import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.entities.weather.HourlyWeather;
 import dev.korostik.skywatch.entities.weather.HourlyWeatherId;
-import dev.korostik.skywatch.entities.reference.WeatherCondition;
-import dev.korostik.skywatch.entities.location.Location;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.List;
-import java.util.Map;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 class HourlyWeatherMapperTest extends MapperTestBase {
 
     private Location location;
     private Map<String, WeatherCondition> conditionMap;
-    private LocalDateTime testDateTime = LocalDateTime.of(2024, 1, 15, 12, 0); // 12:00
+    private final LocalDateTime testDateTime = LocalDateTime.of(2024, 1, 15, 12, 0); // 12:00
     private Instant expectedInstant; // 12:00 Europe/Minsk -> Instant
 
     @BeforeEach
@@ -87,10 +87,10 @@ class HourlyWeatherMapperTest extends MapperTestBase {
 
             // ID (EmbeddedId)
             assertThat(entity.getId()).isNotNull();
-            assertThat(entity.getId().getLocationId()).isEqualTo(TEST_LOCATION_ID);
             assertThat(entity.getId().getTime()).isEqualTo(expectedInstant); // mapDate expression
 
             // Ignored
+            assertThat(entity.getId().getLocationId()).isNull();
             assertThat(entity.getCreatedAt()).isNull();
             assertThat(entity.getUpdatedAt()).isNull();
 

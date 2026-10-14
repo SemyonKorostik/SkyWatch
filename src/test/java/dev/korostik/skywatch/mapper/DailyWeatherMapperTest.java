@@ -1,27 +1,27 @@
 package dev.korostik.skywatch.mapper;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+
 import dev.korostik.skywatch.dto.weather.transit.DailyData;
+import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.entities.weather.DailyWeather;
 import dev.korostik.skywatch.entities.weather.DailyWeatherId;
-import dev.korostik.skywatch.entities.reference.WeatherCondition;
-import dev.korostik.skywatch.entities.location.Location;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.List;
-import java.util.Map;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 class DailyWeatherMapperTest extends MapperTestBase {
 
     private Location location;
     private Map<String, WeatherCondition> conditionMap;
-    private LocalDate testDate = LocalDate.of(2024, 1, 15);
+    private final LocalDate testDate = LocalDate.of(2024, 1, 15);
     private Instant expectedInstant; // 2024-01-15 00:00 Europe/Minsk -> Instant
 
     @BeforeEach
@@ -77,10 +77,10 @@ class DailyWeatherMapperTest extends MapperTestBase {
             
             // ID mapping (EmbeddedId)
             assertThat(entity.getId()).isNotNull();
-            assertThat(entity.getId().getLocationId()).isEqualTo(TEST_LOCATION_ID);
             assertThat(entity.getId().getDate()).isEqualTo(expectedInstant); // mapDate expression
 
             // Ignored
+            assertThat(entity.getId().getLocationId()).isNull();
             assertThat(entity.getCreatedAt()).isNull();
             assertThat(entity.getUpdatedAt()).isNull();
             assertThat(entity.getWindSpeed()).isNull(); // ignore

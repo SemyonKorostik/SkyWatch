@@ -55,9 +55,11 @@ public abstract class MapperTestBase {
                 .provider(ForecastApiProvider.OPEN_METEO)
                 .build();
 
-        WmoWeatherCode wmoClear = WmoWeatherCode.builder().id(0L).description("Clear sky").build();
-        WmoWeatherCode wmoRain = WmoWeatherCode.builder().id(61L).description("Rain").build();
-        WmoWeatherCode wmoSnow = WmoWeatherCode.builder().id(71L).description("Snow fall").build();
+        WmoWeatherCode wmoClear = WmoWeatherCode.builder().code("000").description("Clear sky")
+            .build();
+        WmoWeatherCode wmoRain = WmoWeatherCode.builder().code("061").description("Rain").build();
+        WmoWeatherCode wmoSnow = WmoWeatherCode.builder().code("071").description("Snow fall")
+            .build();
 
         map.put(PROVIDER_CODE_CLEAR, WeatherCondition.builder()
                 .id(10L)
