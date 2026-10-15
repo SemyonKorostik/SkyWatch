@@ -149,6 +149,7 @@ class DailyWeatherMapperTest extends MapperTestBase {
     }
 
     @Test
+    @DisplayName("Should convert each entity to DTO")
     void toDailyDataList_listInput_mapsAll() {
       WeatherCondition cond = conditionMap.get(PROVIDER_CODE_CLEAR);
       List<DailyWeather> entities = List.of(
@@ -164,6 +165,7 @@ class DailyWeatherMapperTest extends MapperTestBase {
     }
 
     @Test
+    @DisplayName("Should return null on null input")
     void toDailyData_nullInput_returnsNull() {
       assertThat(dailyWeatherMapper.toDailyData(null)).isNull();
     }

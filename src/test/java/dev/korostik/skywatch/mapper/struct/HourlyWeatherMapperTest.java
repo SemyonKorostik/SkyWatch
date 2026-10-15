@@ -119,6 +119,7 @@ class HourlyWeatherMapperTest extends MapperTestBase {
     }
 
     @Test
+    @DisplayName("Should convert each DTO to Entity")
     void toEntities_listInput_mapsAll() {
       List<HourlyData> dtos = List.of(
           TestData.dto(testDateTime, PROVIDER_CODE_CLEAR),
@@ -134,6 +135,7 @@ class HourlyWeatherMapperTest extends MapperTestBase {
     }
 
     @Test
+    @DisplayName("Should return null on null input")
     void toEntity_nullInput_returnsNull() {
       assertThat(hourlyWeatherMapper.toEntity(null, location, conditionMap)).isNull();
     }
@@ -174,6 +176,7 @@ class HourlyWeatherMapperTest extends MapperTestBase {
     }
 
     @Test
+    @DisplayName("Should convert each Entity to DTO")
     void toHourlyDataList_listInput_mapsAll() {
       WeatherCondition cond = conditionMap.get(PROVIDER_CODE_CLEAR);
       List<HourlyWeather> entities = List.of(
@@ -190,11 +193,13 @@ class HourlyWeatherMapperTest extends MapperTestBase {
     }
 
     @Test
+    @DisplayName("Should return null on null input")
     void toHourlyData_nullInput_returnsNull() {
       assertThat(hourlyWeatherMapper.toHourlyData(null)).isNull();
     }
 
     @Test
+    @DisplayName("Should throw NPE when Entity's weather condition is null")
     void toHourlyData_nullCondition_throwsNPE() {
       HourlyWeather entity = HourlyWeather.builder()
           .id(new HourlyWeatherId(expectedInstant, TEST_LOCATION_ID))
