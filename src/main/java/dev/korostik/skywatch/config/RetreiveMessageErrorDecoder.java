@@ -3,52 +3,42 @@ package dev.korostik.skywatch.config;
 import dev.korostik.skywatch.exception.WeatherProviderException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import org.springframework.http.HttpStatus;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
 
+@Slf4j
+@Component
+@RequiredArgsConstructor
 public class RetreiveMessageErrorDecoder implements ErrorDecoder {
 
-  private ErrorDecoder errorDecoder = new Default();
+    private final ObjectMapper objectMapper;
 
-  @Override
-  public Exception decode(String methodKey, Response response) {
-    HttpStatus status = HttpStatus.valueOf(response.status());
-    String body = "";
-    Map<String, Object> parsedBody = null;
+    @Override
+    public Exception decode(String methodKey, Response response) {
+        HttpStatus status = HttpStatus.valueOf(response.status());
+        String body = "";
+        Map<String, Object> parsedBody = null;
 
-    // 1. Пытаемся прочитать тело ОДИН РАЗ (InputStream не перечитать)
-    try (InputStream is = response.body().asInputStream()) {
-      body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-      // Пытаемся распарсить в общую Map для логов (если это JSON)
-      if (!body.isBlank() && body.trim().startsWith("{")) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        parsedBody = objectMapper.readValue(body, new TypeReference<>() {
-        });
-      }
-    } catch (IOException ignored) { /* тело не JSON или пустое */ }
+        try (InputStream is = response.body().asInputStream()) {
+            body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            if (!body.isBlank() && body.trim().startsWith("{")) {
+                parsedBody = objectMapper.readValue(body, Map.class);
+            }
+        } catch (IOException ignored) {
+        }
 
-    // 2. Формируем наше единое исключение
-    WeatherProviderException ex = new WeatherProviderException(
-        "Provider call failed: %s %s -> %d %s".formatted(
-            response.request().httpMethod(),
-            response.request().url(),
-            response.status(),
-            body // кладем сырое тело для логов
-        ),
-        status,
-        response.headers()
-    );
+        String providerName = methodKey.split("#")[0];
+        String errorMessage = "Provider '%s' failed: %d %s".formatted(providerName, status.value(), body);
 
-    // 3. (Опционально) Если нужно достать код ошибки провайдера для специфической логики
-    // ex.setProviderErrorCode(parsedBody != null ? (String) parsedBody.get("code") : null);
+        log.warn("Hey, Feign error: {}", errorMessage);
 
-    return ex;
-  }
-
-  ;
+        return new WeatherProviderException(errorMessage, status, response.headers(), providerName);
+    }
 }
