@@ -1,4 +1,4 @@
-package dev.korostik.skywatch.mapper;
+package dev.korostik.skywatch.mapper.struct;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

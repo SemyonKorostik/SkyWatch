@@ -1,4 +1,4 @@
-package dev.korostik.skywatch.mapper;
+package dev.korostik.skywatch.mapper.custom;
 
 import dev.korostik.skywatch.dto.weather.external.HourlyDataDto;
 import dev.korostik.skywatch.dto.weather.transit.HourlyData;

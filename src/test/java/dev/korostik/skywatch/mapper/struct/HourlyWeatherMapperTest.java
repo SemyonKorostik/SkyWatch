@@ -1,4 +1,4 @@
-package dev.korostik.skywatch.mapper;
+package dev.korostik.skywatch.mapper.struct;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
@@ -8,6 +8,7 @@ import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.entities.weather.HourlyWeather;
 import dev.korostik.skywatch.entities.weather.HourlyWeatherId;
+import dev.korostik.skywatch.mapper.MapperTestBase;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -96,6 +97,8 @@ class HourlyWeatherMapperTest extends MapperTestBase {
 
             // Context
             assertThat(entity.getLocation()).isSameAs(location);
+            assertThat(entity.getWeatherCondition()).isSameAs(
+                conditionMap.get(entity.getWeatherCondition().getProviderCode()));
 
             // Direct mappings (with renaming)
             assertThat(entity.getTemperature()).isEqualTo(dto.temperature());

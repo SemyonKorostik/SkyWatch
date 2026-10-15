@@ -2,7 +2,7 @@ package dev.korostik.skywatch.service.location;
 
 import dev.korostik.skywatch.dto.geonames.GeoNameDto;
 import dev.korostik.skywatch.entities.location.Location;
-import dev.korostik.skywatch.mapper.LocationMapper;
+import dev.korostik.skywatch.mapper.struct.LocationMapper;
 import dev.korostik.skywatch.repository.LocationRepository;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;

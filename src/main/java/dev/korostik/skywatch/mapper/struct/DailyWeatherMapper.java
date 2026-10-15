@@ -1,4 +1,4 @@
-package dev.korostik.skywatch.mapper;
+package dev.korostik.skywatch.mapper.struct;
 
 import dev.korostik.skywatch.dto.weather.transit.DailyData;
 import dev.korostik.skywatch.entities.location.Location;

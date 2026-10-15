@@ -3,7 +3,7 @@ package dev.korostik.skywatch;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import dev.korostik.skywatch.config.TestContainerConfiguration;
-import dev.korostik.skywatch.mapper.LocationMapper;
+import dev.korostik.skywatch.mapper.struct.LocationMapper;
 import dev.korostik.skywatch.service.location.LocationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

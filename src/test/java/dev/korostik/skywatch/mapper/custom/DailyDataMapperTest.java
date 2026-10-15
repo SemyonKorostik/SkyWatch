@@ -1,21 +1,23 @@
-package dev.korostik.skywatch.mapper;
+package dev.korostik.skywatch.mapper.custom;
 
-import dev.korostik.skywatch.dto.weather.external.DailyDataDto;
-import dev.korostik.skywatch.dto.weather.transit.DailyData;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import java.time.LocalDate;
-import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import dev.korostik.skywatch.dto.weather.external.DailyDataDto;
+import dev.korostik.skywatch.dto.weather.transit.DailyData;
+import dev.korostik.skywatch.mapper.MapperTestBase;
+import java.time.LocalDate;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
 class DailyDataMapperTest extends MapperTestBase { // Наследуем для констант дат, но маппер свой
 
-    private DailyDataMapper mapper = new DailyDataMapper();
-    private LocalDate date1 = LocalDate.of(2024, 1, 15);
-    private LocalDate date2 = LocalDate.of(2024, 1, 16);
+    private final DailyDataMapper mapper = new DailyDataMapper();
+    private final LocalDate date1 = LocalDate.of(2024, 1, 15);
+    private final LocalDate date2 = LocalDate.of(2024, 1, 16);
 
     @Nested
     @DisplayName("toList (External DTO -> Transit List)")
@@ -106,13 +108,17 @@ class DailyDataMapperTest extends MapperTestBase { // Наследуем для 
         }
 
         @Test
+        @DisplayName("Should roll up into empty lists for empty input")
         void toDto_emptyList_returnsDtoWithEmptyLists() {
             DailyDataDto dto = mapper.toDto(List.of());
             assertThat(dto.time()).isEmpty();
             assertThat(dto.temperatureMax()).isEmpty();
+            assertThat(dto.temperatureMin()).isEmpty();
+            assertThat(dto.weatherCode()).isEmpty();
         }
 
         @Test
+        @DisplayName("Should throw NPE on null input")
         void toDto_nullInput_throwsNPE() {
             assertThatNullPointerException().isThrownBy(() -> mapper.toDto(null));
         }

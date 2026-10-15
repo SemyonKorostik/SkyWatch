@@ -5,7 +5,7 @@ import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.location.LocationName;
 import dev.korostik.skywatch.entities.location.LocationNameId;
 import dev.korostik.skywatch.enums.Language;
-import dev.korostik.skywatch.mapper.LocationNameMapper;
+import dev.korostik.skywatch.mapper.struct.LocationNameMapper;
 import dev.korostik.skywatch.repository.LocationNameRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

@@ -1,19 +1,18 @@
-package dev.korostik.skywatch.mapper;
+package dev.korostik.skywatch.mapper.struct;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import dev.korostik.skywatch.dto.weather.external.CurrentDataDto;
-import dev.korostik.skywatch.entities.weather.CurrentWeather;
-import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.entities.reference.WeatherCondition;
+import dev.korostik.skywatch.entities.weather.CurrentWeather;
+import dev.korostik.skywatch.mapper.MapperTestBase;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Map;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 class CurrentWeatherMapperTest extends MapperTestBase {
 

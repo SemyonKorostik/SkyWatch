@@ -1,21 +1,23 @@
-package dev.korostik.skywatch.mapper;
+package dev.korostik.skywatch.mapper.custom;
 
-import dev.korostik.skywatch.dto.weather.external.HourlyDataDto;
-import dev.korostik.skywatch.dto.weather.transit.HourlyData;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import java.time.LocalDateTime;
-import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import dev.korostik.skywatch.dto.weather.external.HourlyDataDto;
+import dev.korostik.skywatch.dto.weather.transit.HourlyData;
+import dev.korostik.skywatch.mapper.MapperTestBase;
+import java.time.LocalDateTime;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
 class HourlyDataMapperTest extends MapperTestBase {
 
-    private HourlyDataMapper mapper = new HourlyDataMapper();
-    private LocalDateTime time1 = LocalDateTime.of(2024, 1, 15, 12, 0);
-    private LocalDateTime time2 = LocalDateTime.of(2024, 1, 15, 13, 0);
+    private final HourlyDataMapper mapper = new HourlyDataMapper();
+    private final LocalDateTime time1 = LocalDateTime.of(2024, 1, 15, 12, 0);
+    private final LocalDateTime time2 = LocalDateTime.of(2024, 1, 15, 13, 0);
 
     @Nested
     @DisplayName("toList (External DTO -> Transit List)")
