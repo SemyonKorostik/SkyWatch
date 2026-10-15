@@ -29,7 +29,6 @@ class DailyWeatherMapperTest extends MapperTestBase {
     void setUp() {
         location = createTestLocation();
         conditionMap = createWeatherConditionMap();
-        // 2024-01-15 00:00+03:00 = 2024-01-14 21:00 UTC
         expectedInstant = testDate.atStartOfDay(TEST_ZONE_ID).toInstant();
     }
 

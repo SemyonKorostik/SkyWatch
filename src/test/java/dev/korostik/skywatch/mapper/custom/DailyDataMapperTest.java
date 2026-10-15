@@ -13,7 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class DailyDataMapperTest extends MapperTestBase { // Наследуем для констант дат, но маппер свой
+class DailyDataMapperTest extends MapperTestBase {
 
     private final DailyDataMapper mapper = new DailyDataMapper();
     private final LocalDate date1 = LocalDate.of(2024, 1, 15);

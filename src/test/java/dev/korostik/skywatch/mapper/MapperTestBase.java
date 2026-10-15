@@ -20,13 +20,11 @@ import org.mapstruct.factory.Mappers;
 
 public abstract class MapperTestBase {
 
-    // Фиксированные значения для детерминированных тестов
-    protected static final ZoneId TEST_ZONE_ID = ZoneId.of("Europe/Minsk"); // UTC+3 (без DST в тестах проще)
+    protected static final ZoneId TEST_ZONE_ID = ZoneId.of("Europe/Minsk"); // UTC+3 (no DST in tests)
     protected static final Long TEST_LOCATION_ID = 1L;
     protected static final Double TEST_LAT = 53.9;
     protected static final Double TEST_LON = 27.56;
     
-    // Коды погоды провайдера (OpenMeteo использует строковые коды WMO)
     protected static final String PROVIDER_CODE_CLEAR = "0";
     protected static final String PROVIDER_CODE_RAIN = "61";
     protected static final String PROVIDER_CODE_SNOW = "71";
@@ -38,7 +36,7 @@ public abstract class MapperTestBase {
     protected final HourlyDataMapper hourlyDataMapper = new HourlyDataMapper();
 
     /**
-     * Создает тестовую локацию с фиксированным ID и ZoneId.
+     * Creates a test location with fixed ID and ZoneId.
      */
     protected Location createTestLocation() {
         return Location.builder()
@@ -50,8 +48,8 @@ public abstract class MapperTestBase {
     }
 
     /**
-     * Создает мапу WeatherCondition, ключ - providerCode (String), значение - Entity.
-     * Мапперы ищут именно по providerCode.
+     * Creates a WeatherCondition map keyed by providerCode.
+     * Mappers resolve conditions using this providerCode.
      */
     protected Map<String, WeatherCondition> createWeatherConditionMap() {
         Map<String, WeatherCondition> map = new HashMap<>();
@@ -91,14 +89,14 @@ public abstract class MapperTestBase {
     }
 
     /**
-     * Вспомогательный метод: LocalDateTime в ZoneId -> Instant (как в маппере Hourly).
+     * Converts LocalDateTime to Instant using ZoneId (Hourly mapper logic).
      */
     protected Instant toInstant(LocalDateTime ldt, ZoneId zone) {
         return ldt.atZone(zone).toInstant();
     }
 
     /**
-     * Вспомогательный метод: LocalDate в ZoneId -> Instant (start of day) (как в маппере Daily).
+     * Converts LocalDate to Instant (start of day) using ZoneId (Daily mapper logic).
      */
     protected Instant toInstant(LocalDate date, ZoneId zone) {
         return date.atStartOfDay(zone).toInstant();

@@ -70,10 +70,6 @@ class HourlyDataMapperTest extends MapperTestBase {
         @Test
         void toList_nullList_throwsNPE() {
             HourlyDataDto dto = emptyDto();
-            // Ломаем один список
-            // Record immutable, создаем новый через рефлексию или просто тестируем NPE на доступе к .size()
-            // В record компоненты final, но можно передать null в канонический конструктор если не валидировать.
-            // Проще: проверим, что IntStream.range(0, null.size()) -> NPE
             HourlyDataDto badDto = new HourlyDataDto(
                     null, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), List.of()
             );
