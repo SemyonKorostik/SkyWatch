@@ -1,93 +1,188 @@
 package dev.korostik.skywatch.mapper.struct;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 import dev.korostik.skywatch.dto.geonames.GeoNameDto;
 import dev.korostik.skywatch.dto.geonames.TimeZoneDto;
 import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.mapper.MapperTestBase;
 import java.time.ZoneId;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-class LocationMapperTest {
+class LocationMapperTest extends MapperTestBase {
 
-  public static final double LAT = 53.9045;
-  public static final double LON = 27.5615;
-  private final LocationMapper mapper = Mappers.getMapper(LocationMapper.class);
+    private LocationMapper locationMapper;
 
-  @Test
-  void mapToEntity_whenValidDto_thenMapsAllFields() {
-    GeoNameDto dto = new GeoNameDto(
-        "Minsk", LAT, LON, "Belarus", "P", "PPL",
-        new TimeZoneDto("Europe/Minsk")
-    );
+    @BeforeEach
+    void setUp() {
+        locationMapper = Mappers.getMapper(LocationMapper.class);
+    }
 
-    Location result = mapper.mapToEntity(dto);
+    // --- Test Data Builder ---
+    static class TestData {
+        static GeoNameDto validDto() {
+            return new GeoNameDto(
+                    "Minsk",
+                    TEST_LAT,
+                    TEST_LON,
+                    "Belarus",
+                    "P",
+                    "PPL",
+                    new TimeZoneDto("Europe/Minsk")
+            );
+        }
 
-    assertNull(result.getId());
-    assertNull(result.getCreatedAt());
-    assertNull(result.getUpdatedAt());
-    assertEquals(LAT, result.getLatitude());
-    assertEquals(LON, result.getLongitude());
-    assertEquals(ZoneId.of("Europe/Minsk"), result.getTimeZoneId());
-  }
+        static GeoNameDto dtoWithNullTimeZone() {
+            return new GeoNameDto(
+                    "Minsk",
+                    TEST_LAT,
+                    TEST_LON,
+                    "Belarus",
+                    "P",
+                    "PPL",
+                    null
+            );
+        }
 
-  @Test
-  void mapToEntity_whenNullTimeZone_thenReturnsNullZoneId() {
-    GeoNameDto dto = new GeoNameDto(
-        "Minsk", LAT, LON, "Belarus", "P", "PPL", null
-    );
+        static GeoNameDto dtoWithNullCoordinates() {
+            return new GeoNameDto(
+                    "Nowhere",
+                    null,
+                    null,
+                    "Land",
+                    "P",
+                    "PPL",
+                    new TimeZoneDto("UTC")
+            );
+        }
 
-    Location result = mapper.mapToEntity(dto);
+        static GeoNameDto dtoMinCoordinates() {
+            return new GeoNameDto(
+                    "Extreme",
+                    -90.0,
+                    -180.0,
+                    "Land",
+                    "P",
+                    "PPL",
+                    new TimeZoneDto("UTC")
+            );
+        }
 
-    assertNull(result.getTimeZoneId());
-  }
+        static GeoNameDto dtoMaxCoordinates() {
+            return new GeoNameDto(
+                    "Extreme",
+                    90.0,
+                    180.0,
+                    "Land",
+                    "P",
+                    "PPL",
+                    new TimeZoneDto("UTC")
+            );
+        }
+    }
 
-  @Test
-  void mapToEntity_whenNullDto_thenReturnsNull() {
-    assertNull(mapper.mapToEntity(null));
-  }
+    @Nested
+    @DisplayName("mapToEntity (DTO -> Entity)")
+    class ToEntityTests {
 
-  @Test
-  void mapToEntity_whenMinExtremeCoordinates_thenMapsCorrectly() {
-    GeoNameDto dto = new GeoNameDto(
-        "Extreme", -90.0, -180.0, "Land", "P", "PPL",
-        new TimeZoneDto("UTC")
-    );
+        @Test
+        @DisplayName("Should map all fields correctly including timeZone conversion")
+        void mapToEntity_validDto_mapsAllFields() {
+            // Given
+            GeoNameDto dto = TestData.validDto();
 
-    Location result = mapper.mapToEntity(dto);
+            // When
+            Location entity = locationMapper.mapToEntity(dto);
 
-    assertEquals(-90.0, result.getLatitude());
-    assertEquals(-180.0, result.getLongitude());
-    assertEquals(ZoneId.of("UTC"), result.getTimeZoneId());
-  }
+            // Then
+            assertThat(entity).isNotNull();
 
-  @Test
-  void mapToEntity_whenMaxExtremeCoordinates_thenMapsCorrectly() {
-    GeoNameDto dto = new GeoNameDto(
-        "Extreme", 90.0, 180.0, "Land", "P", "PPL",
-        new TimeZoneDto("UTC")
-    );
+            // Ignored fields
+            assertThat(entity.getId()).isNull();
+            assertThat(entity.getCreatedAt()).isNull();
+            assertThat(entity.getUpdatedAt()).isNull();
 
-    Location result = mapper.mapToEntity(dto);
+            // Mapped fields
+            assertThat(entity.getLatitude()).isEqualTo(TEST_LAT);
+            assertThat(entity.getLongitude()).isEqualTo(TEST_LON);
+            assertThat(entity.getTimeZoneId()).isEqualTo(TEST_ZONE_ID);
+        }
 
-    assertEquals(90.0, result.getLatitude());
-    assertEquals(180.0, result.getLongitude());
-    assertEquals(ZoneId.of("UTC"), result.getTimeZoneId());
-  }
+        @Test
+        @DisplayName("Should return null if input DTO is null")
+        void mapToEntity_nullInput_returnsNull() {
+            // When
+            Location entity = locationMapper.mapToEntity(null);
 
-  @Test
-  void mapToEntity_whenNullLatitudeAndLongitude_thenMapsNull() {
-    GeoNameDto dto = new GeoNameDto(
-        "Nowhere", null, null, "Land", "P", "PPL",
-        new TimeZoneDto("UTC")
-    );
+            // Then
+            assertThat(entity).isNull();
+        }
 
-    Location result = mapper.mapToEntity(dto);
+        @Test
+        @DisplayName("Should handle null TimeZoneDto gracefully")
+        void mapToEntity_nullTimeZone_returnsNullZoneId() {
+            // Given
+            GeoNameDto dto = TestData.dtoWithNullTimeZone();
 
-    assertNull(result.getLatitude());
-    assertNull(result.getLongitude());
-  }
+            // When
+            Location entity = locationMapper.mapToEntity(dto);
 
+            // Then
+            assertThat(entity).isNotNull();
+            assertThat(entity.getTimeZoneId()).isNull();
+            assertThat(entity.getLatitude()).isEqualTo(TEST_LAT);
+            assertThat(entity.getLongitude()).isEqualTo(TEST_LON);
+        }
+
+        @Test
+        @DisplayName("Should handle null latitude and longitude")
+        void mapToEntity_nullCoordinates_mapsAsNull() {
+            // Given
+            GeoNameDto dto = TestData.dtoWithNullCoordinates();
+
+            // When
+            Location entity = locationMapper.mapToEntity(dto);
+
+            // Then
+            assertThat(entity).isNotNull();
+            assertThat(entity.getLatitude()).isNull();
+            assertThat(entity.getLongitude()).isNull();
+            assertThat(entity.getTimeZoneId()).isEqualTo(ZoneId.of("UTC"));
+        }
+
+        @Test
+        @DisplayName("Should map minimum extreme coordinates correctly")
+        void mapToEntity_minCoordinates_mapsCorrectly() {
+            // Given
+            GeoNameDto dto = TestData.dtoMinCoordinates();
+
+            // When
+            Location entity = locationMapper.mapToEntity(dto);
+
+            // Then
+            assertThat(entity.getLatitude()).isEqualTo(-90.0);
+            assertThat(entity.getLongitude()).isEqualTo(-180.0);
+            assertThat(entity.getTimeZoneId()).isEqualTo(ZoneId.of("UTC"));
+        }
+
+        @Test
+        @DisplayName("Should map maximum extreme coordinates correctly")
+        void mapToEntity_maxCoordinates_mapsCorrectly() {
+            // Given
+            GeoNameDto dto = TestData.dtoMaxCoordinates();
+
+            // When
+            Location entity = locationMapper.mapToEntity(dto);
+
+            // Then
+            assertThat(entity.getLatitude()).isEqualTo(90.0);
+            assertThat(entity.getLongitude()).isEqualTo(180.0);
+            assertThat(entity.getTimeZoneId()).isEqualTo(ZoneId.of("UTC"));
+        }
+    }
 }
