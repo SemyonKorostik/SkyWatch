@@ -52,17 +52,22 @@ public class ForecastServiceImpl implements ForecastService {
 
   private ForecastResponse fetchForecast(Location location,
       List<OpenWeatherParameters> parameters, int numberOfDays) {
-    return forecastApiClientProxy.getForecast(
-        ForecastRequest.builder()
-            .latitude(location.getLatitude())
-            .longitude(location.getLongitude())
-            .forecastDays(numberOfDays)
-            .zoneId(location.getTimeZoneId().getId())
-            .current(parameters.contains(CURRENT) ? CURRENT.getParameters() : null)
-            .hourly(parameters.contains(HOURLY) ? HOURLY.getParameters() : null)
-            .daily(parameters.contains(DAILY) ? DAILY.getParameters() : null)
-            .build()
-    );
+    try {
+      return forecastApiClientProxy.getForecast(
+          ForecastRequest.builder()
+              .latitude(location.getLatitude())
+              .longitude(location.getLongitude())
+              .forecastDays(numberOfDays)
+              .zoneId(location.getTimeZoneId().getId())
+              .current(parameters.contains(CURRENT) ? CURRENT.getParameters() : null)
+              .hourly(parameters.contains(HOURLY) ? HOURLY.getParameters() : null)
+              .daily(parameters.contains(DAILY) ? DAILY.getParameters() : null)
+              .build()
+      );
+    } catch (Exception e) {
+
+    }
+
   }
 
   private WeatherSummary mapForecast(ForecastResponse response, Location location,
