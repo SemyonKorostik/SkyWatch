@@ -4,8 +4,6 @@ import dev.korostik.skywatch.client.ForecastApiClientProxy;
 import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
 import dev.korostik.skywatch.dto.weather.external.ForecastRequest;
 import dev.korostik.skywatch.dto.weather.external.ForecastResponse;
-import dev.korostik.skywatch.dto.weather.transit.DailyData;
-import dev.korostik.skywatch.dto.weather.transit.HourlyData;
 import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.enums.OpenWeatherParameters;

@@ -33,7 +33,7 @@ class DailyDataMapperTest extends MapperTestBase {
                     .weatherCode(List.of("0", "61"))
                     .build();
 
-            List<DailyData> result = mapper.tolist(dto);
+            List<DailyData> result = mapper.toList(dto);
 
             assertThat(result).hasSize(2);
             
@@ -56,7 +56,7 @@ class DailyDataMapperTest extends MapperTestBase {
                     .weatherCode(List.of())
                     .build();
 
-            assertThat(mapper.tolist(dto)).isEmpty();
+            assertThat(mapper.toList(dto)).isEmpty();
         }
 
         @Test
@@ -69,7 +69,7 @@ class DailyDataMapperTest extends MapperTestBase {
                     .weatherCode(List.of("0"))
                     .build();
 
-            assertThatNullPointerException().isThrownBy(() -> mapper.tolist(dto));
+            assertThatNullPointerException().isThrownBy(() -> mapper.toList(dto));
         }
 
         @Test
@@ -82,7 +82,7 @@ class DailyDataMapperTest extends MapperTestBase {
                     .weatherCode(List.of("0", "61"))
                     .build();
 
-            assertThatThrownBy(() -> mapper.tolist(dto))
+            assertThatThrownBy(() -> mapper.toList(dto))
                     .isInstanceOf(IndexOutOfBoundsException.class);
         }
     }

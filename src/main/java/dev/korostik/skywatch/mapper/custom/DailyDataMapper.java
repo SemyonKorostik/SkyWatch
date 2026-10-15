@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DailyDataMapper {
 
-  public List<DailyData> tolist(DailyDataDto jsonData) {
+  public List<DailyData> toList(DailyDataDto jsonData) {
     return IntStream.range(0, jsonData.time().size())
         .mapToObj(i -> DailyData.builder()
             .temperatureMax(jsonData.temperatureMax().get(i))
