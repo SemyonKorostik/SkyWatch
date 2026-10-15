@@ -69,8 +69,8 @@ class LocationNameMapperTest extends MapperTestBase {
             assertThat(entity.getLocation()).isNull();
 
             // Mapped fields (with renaming)
-            assertThat(entity.getPlaceName()).isEqualTo("Minsk");   // source = "name"
-            assertThat(entity.getCountry()).isEqualTo("Belarus");   // source = "countryName"
+            assertThat(entity.getPlaceName()).isEqualTo("Minsk");
+            assertThat(entity.getCountry()).isEqualTo("Belarus");
         }
 
         @Test
