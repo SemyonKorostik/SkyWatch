@@ -4,6 +4,8 @@ import dev.korostik.skywatch.client.ForecastApiClientProxy;
 import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
 import dev.korostik.skywatch.dto.weather.external.ForecastRequest;
 import dev.korostik.skywatch.dto.weather.external.ForecastResponse;
+import dev.korostik.skywatch.dto.weather.transit.DailyData;
+import dev.korostik.skywatch.dto.weather.transit.HourlyData;
 import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.enums.OpenWeatherParameters;
@@ -40,17 +42,7 @@ public class ForecastServiceImpl implements ForecastService {
   @Transactional
   public WeatherSummary fetchAndSave(Location location, List<OpenWeatherParameters> parameters, int numberOfDays) {
     ForecastResponse response = fetchForecastWithFallback(location, parameters, numberOfDays);
-    // Resolver provides codes for the *successful* provider (or primary if we change logic later)
-    // Note: Since we fallback, the successful provider might not be the first one.
-    // The mappers need codes from the provider that ACTUALLY returned the data.
-    // We need to know which provider succeeded. 
-    // Option A: Return provider type from fetchForecastWithFallback. 
-    // Option B: Assume codes are compatible (WMO standard). 
-    // Given Open-Meteo uses WMO codes, and others likely do too, Option B is pragmatic for now.
-    // But strictly, we should pass the provider type. Let's return a wrapper or just use the primary provider's codes as fallback.
-    // For now, using resolver's primary provider codes (standard WMO).
     Map<String, WeatherCondition> providerCodes = providerResolver.getWithActualProvider();
-    
     WeatherSummary weatherSummary = mapForecast(response, location, providerCodes);
     return weatherPersistenceService.save(weatherSummary);
   }

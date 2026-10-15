@@ -1,28 +1,31 @@
 package dev.korostik.skywatch.exception;
 
-
 import java.util.Collection;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 
 public class WeatherProviderException extends RuntimeException {
 
-  private final HttpStatus status;
-  private final Map<String, Collection<String>> headers;
+    private final HttpStatus status;
+    private final Map<String, Collection<String>> headers;
+    private final String providerName;
 
-  public WeatherProviderException(String message, HttpStatus status,
-      Map<String, Collection<String>> headers) {
-    super(message);
-    this.status = status;
-    this.headers = headers;
-  }
+    public WeatherProviderException(String message, HttpStatus status, Map<String, Collection<String>> headers, String providerName) {
+        super(message);
+        this.status = status;
+        this.headers = headers;
+        this.providerName = providerName;
+    }
 
-  public boolean isRetryable() {
-    // 5xx или 429 (Too Many Requests) — стоит ретраить/переключать провайдера
-    return status.is5xxServerError() || status == HttpStatus.TOO_MANY_REQUESTS;
-  }
+    public boolean isRetryable() {
+        return status.is5xxServerError() || status == HttpStatus.TOO_MANY_REQUESTS;
+    }
 
-  public HttpStatus getStatus() {
-    return status;
-  }
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public String getProviderName() {
+        return providerName;
+    }
 }
