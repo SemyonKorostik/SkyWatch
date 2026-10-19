@@ -25,13 +25,15 @@ class ForecastServiceImplExceptionTest {
 
   private ForecastApiProviderResolver resolver;
   private WeatherPersistenceService persistenceService;
+  private WeatherConditionService conditionService;
   private ForecastServiceImpl service;
 
   @BeforeEach
   void setUp() {
     resolver = Mockito.mock(ForecastApiProviderResolver.class);
     persistenceService = Mockito.mock(WeatherPersistenceService.class);
-    service = new ForecastServiceImpl(resolver, persistenceService,
+    conditionService = Mockito.mock(WeatherConditionService.class);
+    service = new ForecastServiceImpl(resolver, persistenceService, conditionService,
         Mockito.mock(dev.korostik.skywatch.mapper.struct.CurrentWeatherMapper.class),
         Mockito.mock(dev.korostik.skywatch.mapper.struct.DailyWeatherMapper.class),
         Mockito.mock(dev.korostik.skywatch.mapper.custom.DailyDataMapper.class),
@@ -81,7 +83,8 @@ class ForecastServiceImplExceptionTest {
       Mockito.when(failingProxy.getType()).thenReturn(ForecastApiProvider.OPEN_METEO);
       Mockito.when(successProxy.getType()).thenReturn(ForecastApiProvider.OPEN_WEATHER);
       Mockito.when(resolver.getAvailableProviders()).thenReturn(List.of(failingProxy, successProxy));
-      Mockito.when(resolver.getWithActualProvider()).thenReturn(Map.of("0", new WeatherCondition()));
+      Mockito.when(conditionService.getAllByProvider(ForecastApiProvider.OPEN_WEATHER))
+          .thenReturn(Map.of("0", new WeatherCondition()));
       Mockito.when(persistenceService.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 
       WeatherProviderException retryable = new WeatherProviderException("Timeout", HttpStatus.SERVICE_UNAVAILABLE, Map.of(), "OPEN_METEO");

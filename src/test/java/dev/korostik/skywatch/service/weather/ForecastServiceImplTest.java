@@ -1,7 +1,6 @@
 package dev.korostik.skywatch.service.weather;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import dev.korostik.skywatch.client.ForecastApiClientProxy;
 import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
@@ -22,10 +21,8 @@ import dev.korostik.skywatch.enums.OpenWeatherParameters;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -37,6 +34,7 @@ class ForecastServiceImplTest {
 
   private ForecastApiProviderResolver resolver;
   private WeatherPersistenceService persistenceService;
+  private WeatherConditionService conditionService;
   private ForecastServiceImpl service;
 
   private dev.korostik.skywatch.mapper.struct.CurrentWeatherMapper currentWeatherMapper;
@@ -49,14 +47,18 @@ class ForecastServiceImplTest {
   void setUp() {
     resolver = Mockito.mock(ForecastApiProviderResolver.class);
     persistenceService = Mockito.mock(WeatherPersistenceService.class);
-    currentWeatherMapper = Mockito.mock(dev.korostik.skywatch.mapper.struct.CurrentWeatherMapper.class);
+    conditionService = Mockito.mock(WeatherConditionService.class);
+    currentWeatherMapper = Mockito.mock(
+        dev.korostik.skywatch.mapper.struct.CurrentWeatherMapper.class);
     dailyWeatherMapper = Mockito.mock(dev.korostik.skywatch.mapper.struct.DailyWeatherMapper.class);
     dailyDataMapper = Mockito.mock(dev.korostik.skywatch.mapper.custom.DailyDataMapper.class);
     hourlyDataMapper = Mockito.mock(dev.korostik.skywatch.mapper.custom.HourlyDataMapper.class);
-    hourlyWeatherMapper = Mockito.mock(dev.korostik.skywatch.mapper.struct.HourlyWeatherMapper.class);
+    hourlyWeatherMapper = Mockito.mock(
+        dev.korostik.skywatch.mapper.struct.HourlyWeatherMapper.class);
 
-    service = new ForecastServiceImpl(resolver, persistenceService,
-        currentWeatherMapper, dailyWeatherMapper, dailyDataMapper, hourlyDataMapper, hourlyWeatherMapper);
+    service = new ForecastServiceImpl(resolver, persistenceService, conditionService,
+        currentWeatherMapper, dailyWeatherMapper, dailyDataMapper, hourlyDataMapper,
+        hourlyWeatherMapper);
   }
 
   @Nested
@@ -87,7 +89,8 @@ class ForecastServiceImplTest {
       Mockito.when(mockProxy.getForecast(Mockito.any())).thenReturn(response);
       Mockito.when(mockProxy.getType()).thenReturn(ForecastApiProvider.OPEN_METEO);
       Mockito.when(resolver.getAvailableProviders()).thenReturn(List.of(mockProxy));
-      Mockito.when(resolver.getWithActualProvider()).thenReturn(Map.of("0", new WeatherCondition()));
+      Mockito.when(conditionService.getAllByProvider(ForecastApiProvider.OPEN_METEO))
+          .thenReturn(Map.of("0", new WeatherCondition()));
       Mockito.when(persistenceService.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 
       Mockito.when(currentWeatherMapper.toEntity(Mockito.any(), Mockito.any(), Mockito.any()))
@@ -105,7 +108,8 @@ class ForecastServiceImplTest {
 
       // when
       WeatherSummary result = service.fetchAndSave(loc,
-          List.of(OpenWeatherParameters.CURRENT, OpenWeatherParameters.HOURLY, OpenWeatherParameters.DAILY), 3);
+          List.of(OpenWeatherParameters.CURRENT, OpenWeatherParameters.HOURLY,
+              OpenWeatherParameters.DAILY), 3);
 
       // then
       assertThat(result).isNotNull();
@@ -122,10 +126,12 @@ class ForecastServiceImplTest {
       Location loc = Location.builder()
           .latitude(40.0).longitude(-74.0).timeZoneId(ZoneId.of("America/New_York")).build();
       ForecastApiClientProxy mockProxy = Mockito.mock(ForecastApiClientProxy.class);
-      Mockito.when(mockProxy.getForecast(Mockito.any())).thenReturn(ForecastResponse.builder().build());
+      Mockito.when(mockProxy.getForecast(Mockito.any()))
+          .thenReturn(ForecastResponse.builder().build());
       Mockito.when(mockProxy.getType()).thenReturn(ForecastApiProvider.OPEN_METEO);
       Mockito.when(resolver.getAvailableProviders()).thenReturn(List.of(mockProxy));
-      Mockito.when(resolver.getWithActualProvider()).thenReturn(Map.of());
+      Mockito.when(conditionService.getAllByProvider(ForecastApiProvider.OPEN_METEO))
+              .thenReturn(Map.of());
       Mockito.when(persistenceService.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 
       // when
@@ -158,7 +164,8 @@ class ForecastServiceImplTest {
       Mockito.when(mockProxy.getForecast(Mockito.any())).thenReturn(response);
       Mockito.when(mockProxy.getType()).thenReturn(ForecastApiProvider.OPEN_METEO);
       Mockito.when(resolver.getAvailableProviders()).thenReturn(List.of(mockProxy));
-      Mockito.when(resolver.getWithActualProvider()).thenReturn(Map.of("0", new WeatherCondition()));
+      Mockito.when(conditionService.getAllByProvider(ForecastApiProvider.OPEN_METEO))
+          .thenReturn(Map.of("0", new WeatherCondition()));
       Mockito.when(persistenceService.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 
       // when
