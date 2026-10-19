@@ -1,6 +1,6 @@
 package dev.korostik.skywatch.repository;
 
-import dev.korostik.skywatch.entities.Location;
+import dev.korostik.skywatch.entities.location.Location;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

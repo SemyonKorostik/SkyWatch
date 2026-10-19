@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import dev.korostik.skywatch.config.TestContainerConfiguration;
-import dev.korostik.skywatch.entities.Location;
+import dev.korostik.skywatch.entities.location.Location;
 import java.time.ZoneId;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
