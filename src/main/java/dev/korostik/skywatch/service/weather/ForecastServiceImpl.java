@@ -1,6 +1,7 @@
 package dev.korostik.skywatch.service.weather;
 
 import dev.korostik.skywatch.client.ForecastApiClientProxy;
+import dev.korostik.skywatch.dto.weather.domain.ProviderResult;
 import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
 import dev.korostik.skywatch.dto.weather.external.ForecastRequest;
 import dev.korostik.skywatch.dto.weather.external.ForecastResponse;
@@ -29,6 +30,7 @@ public class ForecastServiceImpl implements ForecastService {
 
   private final ForecastApiProviderResolver providerResolver;
   private final WeatherPersistenceService weatherPersistenceService;
+  private final WeatherConditionService weatherConditionService;
 
   private final CurrentWeatherMapper currentWeatherMapper;
   private final DailyWeatherMapper dailyWeatherMapper;
@@ -39,13 +41,13 @@ public class ForecastServiceImpl implements ForecastService {
   @Override
   @Transactional
   public WeatherSummary fetchAndSave(Location location, List<OpenWeatherParameters> parameters, int numberOfDays) {
-    ForecastResponse response = fetchForecastWithFallback(location, parameters, numberOfDays);
-    Map<String, WeatherCondition> providerCodes = providerResolver.getWithActualProvider();
-    WeatherSummary weatherSummary = mapForecast(response, location, providerCodes);
+    ProviderResult providerResult = fetchForecastWithFallback(location, parameters, numberOfDays);
+    Map<String, WeatherCondition> providerCodes = weatherConditionService.getAllByProvider(providerResult.provider());
+    WeatherSummary weatherSummary = mapForecast(providerResult.response(), location, providerCodes);
     return weatherPersistenceService.save(weatherSummary);
   }
 
-  private ForecastResponse fetchForecastWithFallback(Location location, List<OpenWeatherParameters> parameters, int numberOfDays) {
+  private ProviderResult fetchForecastWithFallback(Location location, List<OpenWeatherParameters> parameters, int numberOfDays) {
     ForecastRequest request = buildRequest(location, parameters, numberOfDays);
     List<ForecastApiClientProxy> providers = providerResolver.getAvailableProviders();
 
@@ -58,7 +60,7 @@ public class ForecastServiceImpl implements ForecastService {
     for (ForecastApiClientProxy provider : providers) {
       try {
         log.debug("Fetching forecast from provider: {}", provider.getType());
-        return provider.getForecast(request);
+        return new ProviderResult(provider.getType(), provider.getForecast(request));
       } catch (WeatherProviderException e) {
         errors.add(e);
         log.warn("Provider {} failed with status {} (retryable: {}): {}", 
