@@ -21,6 +21,7 @@ import dev.korostik.skywatch.repository.LocationNameRepository;
 import dev.korostik.skywatch.repository.LocationRepository;
 import dev.korostik.skywatch.service.location.LocationClientServiceImpl;
 import java.time.ZoneId;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,7 @@ class LocationClientServiceImplTest {
     void findOrCreateLocationName_whenLocationAndNameExist_thenReturnsExisting() {
         GeoNameDto dto = createTestGeoNameDto();
         when(locationApiClientProxy.fetch(eq(TEST_LAT), eq(TEST_LON), eq(TEST_LANGUAGE)))
-            .thenReturn(dto);
+            .thenReturn(Optional.of(dto));
 
         Location savedLocation = locationRepository.save(createTestLocation());
         LocationName savedName = locationNameRepository.save(
@@ -98,7 +99,7 @@ class LocationClientServiceImplTest {
     void findOrCreateLocationName_whenLocationExistsButNameMissing_thenCreatesNameOnly() {
         GeoNameDto dto = createTestGeoNameDto();
         when(locationApiClientProxy.fetch(eq(TEST_LAT), eq(TEST_LON), eq(TEST_LANGUAGE)))
-            .thenReturn(dto);
+            .thenReturn(Optional.of(dto));
 
         Location savedLocation = locationRepository.save(createTestLocation());
 
@@ -115,7 +116,7 @@ class LocationClientServiceImplTest {
     void findOrCreateLocationName_whenLocationMissing_thenCreatesLocationAndName() {
         GeoNameDto dto = createTestGeoNameDto();
         when(locationApiClientProxy.fetch(eq(TEST_LAT), eq(TEST_LON), eq(TEST_LANGUAGE)))
-            .thenReturn(dto);
+            .thenReturn(Optional.of(dto));
 
         LocationName result = locationClientService.findOrCreateLocationName(TEST_LAT, TEST_LON, TEST_LANGUAGE);
 
@@ -141,9 +142,9 @@ class LocationClientServiceImplTest {
         );
 
         when(locationApiClientProxy.fetch(eq(TEST_LAT), eq(TEST_LON), eq(Language.EN)))
-            .thenReturn(dtoEn);
+            .thenReturn(Optional.of(dtoEn));
         when(locationApiClientProxy.fetch(eq(TEST_LAT), eq(TEST_LON), eq(Language.RU)))
-            .thenReturn(dtoRu);
+            .thenReturn(Optional.of(dtoRu));
 
         LocationName nameEn = locationClientService.findOrCreateLocationName(TEST_LAT, TEST_LON, Language.EN);
         LocationName nameRu = locationClientService.findOrCreateLocationName(TEST_LAT, TEST_LON, Language.RU);

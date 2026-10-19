@@ -15,7 +15,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface HourlyWeatherMapper {
 
-  @Mapping(target = "id.locationId", ignore = true)
+  @Mapping(target = "id.locationId", expression = "java(location.getId())")
   @Mapping(target = "id.time", expression = "java(mapDate(hourlyData.time(), location))")
   @Mapping(target = "location", expression = "java(location)")
   @Mapping(target = "humidity", source = "relativeHumidity")

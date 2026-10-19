@@ -2,6 +2,7 @@ package dev.korostik.skywatch.client;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,9 +47,10 @@ class LocationApiClientProxyTest {
     when(locationApiClient.fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser")).thenReturn(response);
 
-    GeoNameDto result = proxy.fetch(LAT, LON, Language.EN);
+    Optional<GeoNameDto> result = proxy.fetch(LAT, LON, Language.EN);
 
-    assertSame(dto, result);
+    assertTrue(result.isPresent());
+    assertSame(dto, result.get());
     verify(locationApiClient).fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser");
   }
@@ -61,7 +63,9 @@ class LocationApiClientProxyTest {
     when(locationApiClient.fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser")).thenReturn(response);
 
-    assertThrows(NoSuchElementException.class, () -> proxy.fetch(LAT, LON, Language.EN));
+    Optional<GeoNameDto> result = proxy.fetch(LAT, LON, Language.EN);
+
+    assertTrue(result.isEmpty());
     verify(locationApiClient).fetch(LAT, LON, Language.EN.name(), true, GeoNamesStyle.FULL,
         GeoNamesSource.CITIES_500, 1, "testuser");
   }

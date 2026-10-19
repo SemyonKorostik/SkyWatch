@@ -6,6 +6,7 @@ import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.location.LocationName;
 import dev.korostik.skywatch.entities.location.LocationNameId;
 import dev.korostik.skywatch.enums.Language;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ public class LocationClientServiceImpl implements LocationClientService {
   }
 
   private LocationName createLocationAndName(Double latitude, Double longitude, Language language) {
-    GeoNameDto dto = locationApiClientProxy.fetch(latitude, longitude, language);
+    GeoNameDto dto = fetchLocationDto(latitude, longitude, language);
     Location mappedLocation = locationService.map(dto);
     Location savedLocation = locationService.save(mappedLocation);
     LocationName mappedLocationName = locationNameService.mapToEntity(dto, savedLocation, language);
@@ -45,10 +46,14 @@ public class LocationClientServiceImpl implements LocationClientService {
   }
 
   private LocationName createLocationNameOnly(Location location, Language language) {
-    GeoNameDto dto = locationApiClientProxy.fetch(location.getLatitude(), location.getLongitude(),
-        language);
+    GeoNameDto dto = fetchLocationDto(location.getLatitude(), location.getLongitude(), language);
     LocationName mappedLocationName = locationNameService.mapToEntity(dto, location, language);
     return locationNameService.save(mappedLocationName);
+  }
+
+  private GeoNameDto fetchLocationDto(Double latitude, Double longitude, Language language) {
+    return locationApiClientProxy.fetch(latitude, longitude, language)
+        .orElseThrow(() -> new IllegalStateException("Couldn't find a location for those coordinates"));
   }
 
 }

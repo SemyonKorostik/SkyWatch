@@ -78,10 +78,10 @@ class DailyWeatherMapperTest extends MapperTestBase {
 
       // ID mapping (EmbeddedId)
       assertThat(entity.getId()).isNotNull();
+      assertThat(entity.getId().getLocationId()).isEqualTo(location.getId());
       assertThat(entity.getId().getDate()).isEqualTo(expectedInstant);
 
       // Ignored
-      assertThat(entity.getId().getLocationId()).isNull();
       assertThat(entity.getCreatedAt()).isNull();
       assertThat(entity.getUpdatedAt()).isNull();
       assertThat(entity.getWindSpeed()).isNull();

@@ -16,7 +16,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = ZoneId.class)
 public interface DailyWeatherMapper {
 
-  @Mapping(target = "id.locationId", ignore = true)
+  @Mapping(target = "id.locationId", expression = "java(location.getId())")
   @Mapping(target = "id.date", expression = "java(mapDate(dailyData.date(), location))")
   @Mapping(target = "location", expression = "java(location)")
   @Mapping(target = "windSpeed", ignore = true)

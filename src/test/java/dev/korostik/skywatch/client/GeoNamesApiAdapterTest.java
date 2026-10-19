@@ -46,7 +46,8 @@ class GeoNamesApiAdapterTest {
 
       var result = adapter.fetch(53.9, 27.56, Language.EN);
 
-      assertThat(result).isSameAs(dto);
+      assertThat(result.isPresent()).isTrue();
+      assertThat(result.get()).isSameAs(dto);
     }
 
     @Test
@@ -57,8 +58,9 @@ class GeoNamesApiAdapterTest {
               Mockito.any(), Mockito.anyInt(), Mockito.anyString()))
           .thenReturn(Optional.empty());
 
-      assertThatThrownBy(() -> adapter.fetch(53.9, 27.56, Language.EN))
-          .isInstanceOf(NoSuchElementException.class);
+      Optional<GeoNameDto> result = adapter.fetch(53.9, 27.56, Language.EN);
+
+      assertThat(result.isEmpty()).isTrue();
     }
   }
 }

@@ -89,10 +89,10 @@ class HourlyWeatherMapperTest extends MapperTestBase {
 
       // ID (EmbeddedId)
       assertThat(entity.getId()).isNotNull();
+      assertThat(entity.getId().getLocationId()).isEqualTo(location.getId());
       assertThat(entity.getId().getTime()).isEqualTo(expectedInstant);
 
       // Ignored
-      assertThat(entity.getId().getLocationId()).isNull();
       assertThat(entity.getCreatedAt()).isNull();
       assertThat(entity.getUpdatedAt()).isNull();
 
