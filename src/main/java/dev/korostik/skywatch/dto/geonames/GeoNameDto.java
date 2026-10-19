@@ -2,6 +2,7 @@ package dev.korostik.skywatch.dto.geonames;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Range;
 
@@ -12,6 +13,6 @@ public record GeoNameDto(@JsonProperty("name") @NotNull String name,
                          @JsonProperty("countryName") @NotNull String countryName,
                          @JsonProperty("fcl") @NotNull String featureClass,
                          @JsonProperty("fcode") @NotNull String featureCode,
-                         @JsonProperty("timezone") @NotNull TimeZoneDto timeZone) {
+                         @JsonProperty("timezone") @Valid @NotNull TimeZoneDto timeZone) {
 
 }

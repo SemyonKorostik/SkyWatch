@@ -1,0 +1,41 @@
+package dev.korostik.skywatch.service.location;
+
+import dev.korostik.skywatch.dto.geonames.GeoNameDto;
+import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.entities.location.LocationName;
+import dev.korostik.skywatch.entities.location.LocationNameId;
+import dev.korostik.skywatch.enums.Language;
+import dev.korostik.skywatch.mapper.struct.LocationNameMapper;
+import dev.korostik.skywatch.repository.LocationNameRepository;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class LocationNameServiceImpl implements LocationNameService {
+
+  private final LocationNameMapper locationNameMapper;
+  private final LocationNameRepository locationNameRepository;
+
+  @Override
+  public Optional<LocationName> findById(LocationNameId id) {
+    return locationNameRepository.findById(id);
+  }
+
+  @Override
+  public LocationName mapToEntity(GeoNameDto geoNameDto, Location location, Language language) {
+    if (location.getId() == null) {
+      throw new IllegalStateException("Location must be persisted before mapping name");
+    }
+    LocationName locationName = locationNameMapper.mapToEntity(geoNameDto);
+    locationName.setId(new LocationNameId(location.getId(), language));
+    locationName.setLocation(location);
+    return locationName;
+  }
+
+  @Override
+  public LocationName save(LocationName locationName) {
+    return locationNameRepository.save(locationName);
+  }
+}

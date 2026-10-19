@@ -1,7 +1,7 @@
 package dev.korostik.skywatch.repository;
 
-import dev.korostik.skywatch.entities.LocationName;
-import dev.korostik.skywatch.entities.LocationNameId;
+import dev.korostik.skywatch.entities.location.LocationName;
+import dev.korostik.skywatch.entities.location.LocationNameId;
 import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
