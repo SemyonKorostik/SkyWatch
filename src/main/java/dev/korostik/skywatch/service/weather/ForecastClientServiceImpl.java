@@ -2,10 +2,13 @@ package dev.korostik.skywatch.service.weather;
 
 import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
 import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.entities.location.LocationName;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.entities.reference.WmoWeatherCode;
 import dev.korostik.skywatch.entities.weather.CurrentWeather;
+import dev.korostik.skywatch.enums.Language;
 import dev.korostik.skywatch.enums.OpenWeatherParameters;
+import dev.korostik.skywatch.service.location.LocationClientService;
 import dev.korostik.skywatch.telegram.chat.template.ChatTemplates;
 import dev.korostik.skywatch.telegram.chat.template.TemplateEngine;
 import java.time.Instant;
@@ -22,12 +25,16 @@ import org.springframework.stereotype.Service;
 public class ForecastClientServiceImpl implements ForecastClientService {
 
   private final ForecastService forecastService;
+  private final LocationClientService locationClientService;
 
   @Override
-  public String getCurrentWeather(Location location) {
+  public String getCurrentWeather(Location location, Language language) {
     // Fetch current weather data
     WeatherSummary weatherSummary = forecastService.fetchAndSave(location,
         List.of(OpenWeatherParameters.CURRENT), null);
+
+    LocationName locationName = locationClientService.findOrCreateLocationName(
+        location.getLatitude(), location.getLongitude(), language);
 
     CurrentWeather current = weatherSummary.getCurrentWeather();
     if (current == null) {
@@ -51,29 +58,17 @@ public class ForecastClientServiceImpl implements ForecastClientService {
     // Wind speed conversion m/s -> km/h (OpenMeteo default is m/s)
     Double windSpeedKmh = current.getWindSpeed() != null ? current.getWindSpeed() * 3.6 : 0.0;
 
-    // Location name (Location entity has no name, use coordinates)
-    String locationName = String.format(Locale.US, "%.2f°, %.2f°", location.getLatitude(), location.getLongitude());
+    String locationParam = locationName.getPlaceName() + ", " + locationName.getCountry();
 
-    // Build template values
-    // NOTE: feelsLike, tempMin, tempMax, visibility, uvIndex, sunrise, sunset are NOT available in CurrentWeather entity.
-    // They require DAILY/HOURLY parameters in the API request.
     Map<String, String> values = Map.ofEntries(
-        Map.entry("location", locationName),
+        Map.entry("location", locationParam),
         Map.entry("icon", icon),
         Map.entry("temp", formatDouble(current.getTemperature())),
         Map.entry("condition", conditionText),
-        Map.entry("feelsLike", "N/A"), // Requires HOURLY (apparent_temperature)
-        Map.entry("tempMin", "N/A"),   // Requires DAILY (temperature_2m_min)
-        Map.entry("tempMax", "N/A"),   // Requires DAILY (temperature_2m_max)
         Map.entry("humidity", formatInt(current.getHumidity())),
         Map.entry("windSpeed", String.format(Locale.US, "%.1f", windSpeedKmh)),
         Map.entry("windDir", windDir),
         Map.entry("pressure", formatDouble(current.getPressure())),
-        Map.entry("visibility", "N/A"), // Requires HOURLY (visibility)
-        Map.entry("uvIndex", "N/A"),    // Requires HOURLY (uv_index)
-        Map.entry("uvDesc", ""),
-        Map.entry("sunrise", "N/A"),    // Requires DAILY (sunrise)
-        Map.entry("sunset", "N/A"),     // Requires DAILY (sunset)
         Map.entry("time", updatedTime)
     );
 
@@ -81,17 +76,17 @@ public class ForecastClientServiceImpl implements ForecastClientService {
   }
 
   @Override
-  public String getHourlyForecast(Location location) {
+  public String getHourlyForecast(Location location, Language language) {
     return "";
   }
 
   @Override
-  public String getDailyForecast(Location location) {
+  public String getDailyForecast(Location location, Language language) {
     return "";
   }
 
   @Override
-  public String getWeeklyForecast(Location location) {
+  public String getWeeklyForecast(Location location, Language language) {
     return "";
   }
 
