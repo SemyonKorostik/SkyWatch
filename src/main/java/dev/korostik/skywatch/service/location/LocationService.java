@@ -11,4 +11,6 @@ public interface LocationService {
   Location map(GeoNameDto dto);
 
   Location save(Location location);
+
+  Location findById(Long id);
 }

@@ -21,10 +21,12 @@ repositories {
 dependencies {
     implementation(platform(libs.spring.boot.dependencies))
     implementation(platform(libs.spring.cloud))
+    implementation(platform(libs.telegram.bot.dependencies))
     implementation(libs.spring.cloud.openfeign)
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.validation)
+    implementation(libs.telegram.bot.spring.boot.starter)
     developmentOnly(libs.spring.boot.devtools)
     annotationProcessor(libs.spring.boot.configuration.processor)
     annotationProcessor(libs.mapsrtruct.processor)

@@ -38,4 +38,8 @@ public class LocationServiceImpl implements LocationService {
     return locationRepository.save(location);
   }
 
+  @Override
+  public Location findById(Long id) {
+    return locationRepository.findById(id).orElseThrow();
+  }
 }

@@ -1,8 +1,7 @@
 package dev.korostik.skywatch.service.weather;
 
+import com.pengrad.telegrambot.request.SendMessage;
 import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
-import dev.korostik.skywatch.entities.location.Location;
-import dev.korostik.skywatch.entities.location.LocationName;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.entities.reference.WmoWeatherCode;
 import dev.korostik.skywatch.entities.weather.CurrentWeather;
@@ -10,9 +9,10 @@ import dev.korostik.skywatch.entities.weather.DailyWeather;
 import dev.korostik.skywatch.entities.weather.HourlyWeather;
 import dev.korostik.skywatch.enums.Language;
 import dev.korostik.skywatch.enums.OpenWeatherParameters;
-import dev.korostik.skywatch.service.location.LocationClientService;
 import dev.korostik.skywatch.telegram.chat.template.ChatTemplates;
 import dev.korostik.skywatch.telegram.chat.template.TemplateEngine;
+import dev.korostik.skywatch.telegram.menu.KeyboardMenu;
+import io.ksilisk.telegrambot.core.executor.TelegramBotExecutor;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -28,34 +28,32 @@ import org.springframework.stereotype.Service;
 public class ForecastClientServiceImpl implements ForecastClientService {
 
   private final ForecastService forecastService;
-  private final LocationClientService locationClientService;
+  private final TelegramBotExecutor telegramBotExecutor;
+  private final KeyboardMenu keyboardMenu;
 
   @Override
-  public String getCurrentWeather(Location location, Language language) {
-    WeatherSummary weatherSummary = forecastService.fetchAndSave(location,
-        List.of(OpenWeatherParameters.CURRENT), null);
-
-    LocationName locationName = locationClientService.findOrCreateLocationName(
-        location.getLatitude(), location.getLongitude(), language);
+  public void sendCurrentWeather(Long chatId, Long locationId, Language language) {
+    WeatherSummary weatherSummary = forecastService.fetchAndSave(locationId,
+        List.of(OpenWeatherParameters.CURRENT), null, language);
 
     CurrentWeather current = weatherSummary.getCurrentWeather();
-    if (current == null) {
-      return "Weather data unavailable";
-    }
 
     WeatherCondition condition = current.getWeatherCondition();
     WmoWeatherCode wmoCode = condition != null ? condition.getWmoCode() : null;
     String icon = wmoCode != null ? wmoCode.getEmoji() : "❓";
     String conditionText = wmoCode != null ? wmoCode.getDescription() : "Unknown";
 
-    ZoneId zoneId = location.getTimeZoneId();
+    ZoneId zoneId = weatherSummary.getLocationName().getLocation().getTimeZoneId();
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm").withZone(zoneId);
-    String updatedTime = current.getUpdatedAt() != null ? timeFormatter.format(current.getUpdatedAt()) : "N/A";
+    String updatedTime =
+        current.getUpdatedAt() != null ? timeFormatter.format(current.getUpdatedAt()) : "N/A";
 
     String windDir = degreesToCompass(current.getWindDirection());
     Double windSpeedKmh = current.getWindSpeed() != null ? current.getWindSpeed() * 3.6 : 0.0;
 
-    String locationParam = locationName.getPlaceName() + ", " + locationName.getCountry();
+    String locationParam =
+        weatherSummary.getLocationName().getPlaceName() + ", " + weatherSummary.getLocationName()
+            .getCountry();
 
     Map<String, String> values = Map.ofEntries(
         Map.entry("location", locationParam),
@@ -69,25 +67,23 @@ public class ForecastClientServiceImpl implements ForecastClientService {
         Map.entry("time", updatedTime)
     );
 
-    return TemplateEngine.render(ChatTemplates.CURRENT_WEATHER_TEMPLATE, values);
+    String render = TemplateEngine.render(ChatTemplates.CURRENT_WEATHER_TEMPLATE, values);
+    SendMessage message = new SendMessage(chatId, render);
+    message.setReplyMarkup(keyboardMenu.getForecastReplyMarkup());
+    telegramBotExecutor.execute(message);
   }
 
   @Override
-  public String getHourlyForecast(Location location, Language language) {
-    WeatherSummary weatherSummary = forecastService.fetchAndSave(location,
-        List.of(OpenWeatherParameters.CURRENT, OpenWeatherParameters.HOURLY), 2);
-
-    LocationName locationName = locationClientService.findOrCreateLocationName(
-        location.getLatitude(), location.getLongitude(), language);
+  public void sendHourlyForecast(Long chatId, Long locationId, Language language) {
+    WeatherSummary weatherSummary = forecastService.fetchAndSave(locationId,
+        List.of(OpenWeatherParameters.CURRENT, OpenWeatherParameters.HOURLY), 2, language);
 
     List<HourlyWeather> hourlyList = weatherSummary.getHourlyWeather();
-    if (hourlyList == null || hourlyList.isEmpty()) {
-      return "Hourly forecast unavailable";
-    }
 
-    ZoneId zoneId = location.getTimeZoneId();
+    ZoneId zoneId = weatherSummary.getLocationName().getLocation().getTimeZoneId();
     DateTimeFormatter hourFormatter = DateTimeFormatter.ofPattern("HH:mm").withZone(zoneId);
-    String updatedTime = weatherSummary.getCurrentWeather() != null && weatherSummary.getCurrentWeather().getUpdatedAt() != null
+    String updatedTime = weatherSummary.getCurrentWeather() != null
+        && weatherSummary.getCurrentWeather().getUpdatedAt() != null
         ? hourFormatter.format(weatherSummary.getCurrentWeather().getUpdatedAt())
         : "N/A";
 
@@ -95,55 +91,66 @@ public class ForecastClientServiceImpl implements ForecastClientService {
     String hourlyRows = hourlyList.stream()
         .filter(hw -> hw.getId().getTime().isAfter(now.minusSeconds(1)))
         .limit(24)
-        .map(hw -> formatHourlyRow(hw, zoneId, hourFormatter))
+        .map(hw -> formatHourlyRow(hw, hourFormatter))
         .collect(Collectors.joining("\n"));
 
     Map<String, String> values = Map.of(
-        "location", locationName.getPlaceName() + ", " + locationName.getCountry(),
+        "location",
+        weatherSummary.getLocationName().getPlaceName() + ", " + weatherSummary.getLocationName()
+            .getCountry(),
         "hourlyRows", hourlyRows.isEmpty() ? "No data" : hourlyRows,
         "time", updatedTime
     );
 
-    return TemplateEngine.render(ChatTemplates.HOURLY_WEATHER_TEMPLATE, values);
+    String render = TemplateEngine.render(ChatTemplates.HOURLY_WEATHER_TEMPLATE, values);
+    SendMessage message = new SendMessage(chatId, render);
+    message.setReplyMarkup(keyboardMenu.getForecastReplyMarkup());
+    telegramBotExecutor.execute(message);
   }
 
   @Override
-  public String getDailyForecast(Location location, Language language) {
-    return renderDailyForecast(location, language, 3);
+  public void sendDailyForecast(Long chatId, Long locationId, Language language) {
+    String render = renderDailyForecast(locationId, language, 3);
+    SendMessage message = new SendMessage(chatId, render);
+    message.setReplyMarkup(keyboardMenu.getForecastReplyMarkup());
+    telegramBotExecutor.execute(message);
   }
 
   @Override
-  public String getWeeklyForecast(Location location, Language language) {
-    return renderDailyForecast(location, language, 7);
+  public void sendWeeklyForecast(Long chatId, Long locationId, Language language) {
+    String render = renderDailyForecast(locationId, language, 7);
+    SendMessage message = new SendMessage(chatId, render);
+    message.setReplyMarkup(keyboardMenu.getForecastReplyMarkup());
+    telegramBotExecutor.execute(message);
   }
 
-  private String renderDailyForecast(Location location, Language language, int days) {
-    WeatherSummary weatherSummary = forecastService.fetchAndSave(location,
-        List.of(OpenWeatherParameters.CURRENT, OpenWeatherParameters.DAILY), days);
-
-    LocationName locationName = locationClientService.findOrCreateLocationName(
-        location.getLatitude(), location.getLongitude(), language);
+  private String renderDailyForecast(Long locationId, Language language, int days) {
+    WeatherSummary weatherSummary = forecastService.fetchAndSave(locationId,
+        List.of(OpenWeatherParameters.CURRENT, OpenWeatherParameters.DAILY), days, language);
 
     List<DailyWeather> dailyList = weatherSummary.getDailyWeather();
     if (dailyList == null || dailyList.isEmpty()) {
       return "Daily forecast unavailable";
     }
 
-    ZoneId zoneId = location.getTimeZoneId();
+    ZoneId zoneId = weatherSummary.getLocationName().getLocation().getTimeZoneId();
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM").withZone(zoneId);
-    Locale locale = new Locale(language.getCode());
-    DateTimeFormatter dayNameFormatter = DateTimeFormatter.ofPattern("EEEE").withZone(zoneId).withLocale(locale);
-    String updatedTime = weatherSummary.getCurrentWeather() != null && weatherSummary.getCurrentWeather().getUpdatedAt() != null
-        ? DateTimeFormatter.ofPattern("HH:mm").withZone(zoneId).format(weatherSummary.getCurrentWeather().getUpdatedAt())
+    DateTimeFormatter dayNameFormatter = DateTimeFormatter.ofPattern("EEEE").withZone(zoneId);
+    String updatedTime = weatherSummary.getCurrentWeather() != null
+        && weatherSummary.getCurrentWeather().getUpdatedAt() != null
+        ? DateTimeFormatter.ofPattern("HH:mm").withZone(zoneId)
+        .format(weatherSummary.getCurrentWeather().getUpdatedAt())
         : "N/A";
 
     String dailyRows = dailyList.stream()
         .limit(days)
-        .map(dw -> formatDailyRow(dw, zoneId, dateFormatter, dayNameFormatter))
+        .map(dw -> formatDailyRow(dw, dateFormatter, dayNameFormatter))
         .collect(Collectors.joining("\n\n"));
 
     Map<String, String> values = Map.of(
-        "location", locationName.getPlaceName() + ", " + locationName.getCountry(),
+        "location",
+        weatherSummary.getLocationName().getPlaceName() + ", " + weatherSummary.getLocationName()
+            .getCountry(),
         "days", String.valueOf(days),
         "dailyRows", dailyRows.isEmpty() ? "No data" : dailyRows,
         "time", updatedTime
@@ -152,7 +159,7 @@ public class ForecastClientServiceImpl implements ForecastClientService {
     return TemplateEngine.render(ChatTemplates.DAILY_WEATHER_TEMPLATE, values);
   }
 
-  private String formatHourlyRow(HourlyWeather hw, ZoneId zoneId, DateTimeFormatter timeFormatter) {
+  private String formatHourlyRow(HourlyWeather hw, DateTimeFormatter timeFormatter) {
     Instant timeInstant = hw.getId().getTime();
     String timeStr = timeFormatter.format(timeInstant);
 
@@ -172,7 +179,8 @@ public class ForecastClientServiceImpl implements ForecastClientService {
     ));
   }
 
-  private String formatDailyRow(DailyWeather dw, ZoneId zoneId, DateTimeFormatter dateFormatter, DateTimeFormatter dayNameFormatter) {
+  private String formatDailyRow(DailyWeather dw, DateTimeFormatter dateFormatter,
+      DateTimeFormatter dayNameFormatter) {
     Instant dateInstant = dw.getId().getDate();
     String dateStr = dateFormatter.format(dateInstant);
     String dayNameStr = dayNameFormatter.format(dateInstant);
@@ -183,10 +191,10 @@ public class ForecastClientServiceImpl implements ForecastClientService {
 
     String tempMaxStr = formatDouble(dw.getTemperatureMax());
     String tempMinStr = formatDouble(dw.getTemperatureMin());
-    
+
     // DailyWeather entity lacks precipitation fields. Using humidity as fallback for {precip}% placeholder.
     String precipStr = formatInt(dw.getHumidity());
-    
+
     Double windSpeedKmh = dw.getWindSpeed() != null ? dw.getWindSpeed() * 3.6 : 0.0;
     String windStr = String.format(Locale.US, "%.1f", windSpeedKmh);
 
@@ -215,8 +223,11 @@ public class ForecastClientServiceImpl implements ForecastClientService {
   }
 
   private String degreesToCompass(Integer degrees) {
-    if (degrees == null) return "";
-    String[] directions = {"N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"};
+    if (degrees == null) {
+      return "";
+    }
+    String[] directions = {"N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW",
+        "WSW", "W", "WNW", "NW", "NNW"};
     int index = (int) Math.round(degrees / 22.5) % 16;
     return directions[index < 0 ? index + 16 : index];
   }

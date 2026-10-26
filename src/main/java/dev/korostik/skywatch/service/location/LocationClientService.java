@@ -6,4 +6,6 @@ import dev.korostik.skywatch.enums.Language;
 public interface LocationClientService {
 
   LocationName findOrCreateLocationName(Double latitude, Double longitude, Language language);
+
+  void sendLocation(Long chatId, LocationName locationName);
 }

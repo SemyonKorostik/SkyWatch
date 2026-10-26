@@ -2,6 +2,7 @@ package dev.korostik.skywatch.entities.weather;
 
 import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,7 +37,7 @@ public class CurrentWeather {
   private Long id;
 
   @MapsId
-  @OneToOne(fetch = FetchType.LAZY, optional = false)
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, optional = false)
   @JoinColumn(name = "location_id", nullable = false)
   private Location location;
 

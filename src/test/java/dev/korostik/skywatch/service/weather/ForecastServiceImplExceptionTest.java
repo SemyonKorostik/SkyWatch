@@ -52,7 +52,8 @@ class ForecastServiceImplExceptionTest {
           .latitude(53.9).longitude(27.56).timeZoneId(ZoneId.of("Europe/Minsk")).build();
       Mockito.when(resolver.getAvailableProviders()).thenReturn(Collections.emptyList());
 
-      assertThatThrownBy(() -> service.fetchAndSave(loc, List.of(OpenWeatherParameters.CURRENT), 1))
+      assertThatThrownBy(
+          () -> service.fetchAndSave(loc.getId(), List.of(OpenWeatherParameters.CURRENT), 1))
           .isInstanceOf(WeatherServiceException.class)
           .hasMessageContaining("No available weather providers configured");
     }
@@ -68,7 +69,8 @@ class ForecastServiceImplExceptionTest {
       WeatherProviderException ex = new WeatherProviderException("Invalid params", HttpStatus.BAD_REQUEST, Map.of(), "OPEN_METEO");
       Mockito.when(proxy.getForecast(Mockito.any())).thenThrow(ex);
 
-      assertThatThrownBy(() -> service.fetchAndSave(loc, List.of(OpenWeatherParameters.CURRENT), 1))
+      assertThatThrownBy(
+          () -> service.fetchAndSave(loc.getId(), List.of(OpenWeatherParameters.CURRENT), 1))
           .isInstanceOf(WeatherServiceException.class)
           .hasMessageContaining("non-retryable error");
     }
@@ -91,7 +93,7 @@ class ForecastServiceImplExceptionTest {
       Mockito.when(failingProxy.getForecast(Mockito.any())).thenThrow(retryable);
       Mockito.when(successProxy.getForecast(Mockito.any())).thenReturn(ForecastResponse.builder().build());
 
-      service.fetchAndSave(loc, List.of(OpenWeatherParameters.CURRENT), 1);
+      service.fetchAndSave(loc.getId(), List.of(OpenWeatherParameters.CURRENT), 1);
       Mockito.verify(successProxy).getForecast(Mockito.any());
     }
 
@@ -109,7 +111,8 @@ class ForecastServiceImplExceptionTest {
       Mockito.when(proxy1.getForecast(Mockito.any())).thenThrow(retryable);
       Mockito.when(proxy2.getForecast(Mockito.any())).thenThrow(retryable);
 
-      assertThatThrownBy(() -> service.fetchAndSave(loc, List.of(OpenWeatherParameters.CURRENT), 1))
+      assertThatThrownBy(
+          () -> service.fetchAndSave(loc.getId(), List.of(OpenWeatherParameters.CURRENT), 1))
           .isInstanceOf(WeatherServiceException.class)
           .hasMessageContaining("All weather providers failed");
     }

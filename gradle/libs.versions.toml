@@ -9,6 +9,7 @@ testcontainers = "1.21.4"
 postgresql = "42.7.13"
 mapstruct = "1.6.3"
 lombok-mapstruct = "0.2.0"
+telegram-bot = "0.7.0"
 
 [libraries]
 #Spring Boot
@@ -21,6 +22,10 @@ spring-boot-configuration-processor = { group = "org.springframework.boot", name
 spring-boot-testcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers" }
 spring-boot-starter-liquibase = { group = "org.springframework.boot", name = "spring-boot-starter-liquibase" }
 spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
+
+#Telegram Bot
+telegram-bot-dependencies = { group = "io.github.ksilisk", name = "telegram-bot-dependencies", version.ref = "telegram-bot" }
+telegram-bot-spring-boot-starter = { group = "io.github.ksilisk", name = "telegram-bot-spring-boot-starter" }
 
 #Spring Cloud
 spring-cloud = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }

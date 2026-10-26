@@ -40,12 +40,12 @@ class LocationNameServiceImplTest {
   private LocationNameServiceImpl locationNameService;
 
   @Test
-  void findById_whenExists_thenReturnsLocationName() {
+  void findWithLocationById_whenExists_thenReturnsLocationName() {
     LocationNameId id = new LocationNameId(LOCATION_ID, Language.RU);
     LocationName entity = new LocationName();
     when(locationNameRepository.findById(id)).thenReturn(Optional.of(entity));
 
-    Optional<LocationName> result = locationNameService.findById(id);
+    Optional<LocationName> result = locationNameService.findWithLocationById(id);
 
     assertTrue(result.isPresent());
     assertSame(entity, result.get());
@@ -53,11 +53,11 @@ class LocationNameServiceImplTest {
   }
 
   @Test
-  void findById_whenNotFound_thenReturnsEmpty() {
+  void findWithLocationById_whenNotFound_thenReturnsEmpty() {
     LocationNameId id = new LocationNameId(LOCATION_ID, Language.RU);
     when(locationNameRepository.findById(id)).thenReturn(Optional.empty());
 
-    Optional<LocationName> result = locationNameService.findById(id);
+    Optional<LocationName> result = locationNameService.findWithLocationById(id);
 
     assertTrue(result.isEmpty());
     verify(locationNameRepository).findById(id);

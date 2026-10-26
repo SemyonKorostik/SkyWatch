@@ -107,7 +107,7 @@ class ForecastServiceImplTest {
           .thenReturn(List.of(HourlyWeather.builder().build()));
 
       // when
-      WeatherSummary result = service.fetchAndSave(loc,
+      WeatherSummary result = service.fetchAndSave(loc.getId(),
           List.of(OpenWeatherParameters.CURRENT, OpenWeatherParameters.HOURLY,
               OpenWeatherParameters.DAILY), 3);
 
@@ -135,7 +135,7 @@ class ForecastServiceImplTest {
       Mockito.when(persistenceService.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 
       // when
-      service.fetchAndSave(loc, List.of(OpenWeatherParameters.CURRENT), 5);
+      service.fetchAndSave(loc.getId(), List.of(OpenWeatherParameters.CURRENT), 5);
 
       // then
       ArgumentCaptor<ForecastRequest> captor = ArgumentCaptor.forClass(ForecastRequest.class);
@@ -169,7 +169,8 @@ class ForecastServiceImplTest {
       Mockito.when(persistenceService.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 
       // when
-      WeatherSummary result = service.fetchAndSave(loc, List.of(OpenWeatherParameters.CURRENT), 1);
+      WeatherSummary result = service.fetchAndSave(loc.getId(),
+          List.of(OpenWeatherParameters.CURRENT), 1);
 
       // then
       assertThat(result).isNotNull();

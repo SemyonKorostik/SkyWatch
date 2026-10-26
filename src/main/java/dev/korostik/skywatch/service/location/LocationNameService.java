@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface LocationNameService {
 
-  Optional<LocationName> findById(LocationNameId id);
+  Optional<LocationName> findWithLocationById(LocationNameId id);
 
   LocationName mapToEntity(GeoNameDto geoNameDto, Location location, Language language);
 

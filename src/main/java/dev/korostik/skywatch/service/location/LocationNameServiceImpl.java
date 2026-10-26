@@ -19,8 +19,8 @@ public class LocationNameServiceImpl implements LocationNameService {
   private final LocationNameRepository locationNameRepository;
 
   @Override
-  public Optional<LocationName> findById(LocationNameId id) {
-    return locationNameRepository.findById(id);
+  public Optional<LocationName> findWithLocationById(LocationNameId id) {
+    return locationNameRepository.findWithLocationById(id);
   }
 
   @Override

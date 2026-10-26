@@ -1,8 +1,11 @@
 package dev.korostik.skywatch.entities.user;
 
 import dev.korostik.skywatch.entities.location.Location;
+import dev.korostik.skywatch.enums.Language;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -41,8 +44,9 @@ public class User {
   @Column(name = "login", nullable = false)
   private String login;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "language", nullable = false, length = 2)
-  private String language;
+  private Language language;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "location_id")

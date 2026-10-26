@@ -1,5 +1,8 @@
 package dev.korostik.skywatch.enums;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public enum Language {
   RU, EN;
 
@@ -9,5 +12,9 @@ public enum Language {
           "The Language constant name must contain 2 characters: " + name()
       );
     }
+  }
+
+  public static Optional<Language> from(String name) {
+    return Arrays.stream(values()).filter(t -> t.name().equals(name.toUpperCase())).findFirst();
   }
 }

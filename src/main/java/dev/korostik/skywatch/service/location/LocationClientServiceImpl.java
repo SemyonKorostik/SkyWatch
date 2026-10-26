@@ -1,12 +1,14 @@
 package dev.korostik.skywatch.service.location;
 
+import com.pengrad.telegrambot.request.SendMessage;
 import dev.korostik.skywatch.client.GeoNamesApiAdapter;
 import dev.korostik.skywatch.dto.geonames.GeoNameDto;
 import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.location.LocationName;
 import dev.korostik.skywatch.entities.location.LocationNameId;
 import dev.korostik.skywatch.enums.Language;
-import java.util.Optional;
+import dev.korostik.skywatch.telegram.menu.KeyboardMenu;
+import io.ksilisk.telegrambot.core.executor.TelegramBotExecutor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,8 @@ public class LocationClientServiceImpl implements LocationClientService {
   private final LocationService locationService;
   private final LocationNameService locationNameService;
   private final GeoNamesApiAdapter locationApiClientProxy;
+  private final TelegramBotExecutor telegramBotExecutor;
+  private final KeyboardMenu keyboardMenu;
 
   /**
    * Возвращает имя локации для заданных координат и языка. Если локация ближайшая не найдена –
@@ -31,7 +35,7 @@ public class LocationClientServiceImpl implements LocationClientService {
     return locationService.getNearest(latitude, longitude)
         .map(location -> {
           LocationNameId id = new LocationNameId(location.getId(), language);
-          return locationNameService.findById(id)
+          return locationNameService.findWithLocationById(id)
               .orElseGet(() -> createLocationNameOnly(location, language));
         })
         .orElseGet(() -> createLocationAndName(latitude, longitude, language));
@@ -56,4 +60,10 @@ public class LocationClientServiceImpl implements LocationClientService {
         .orElseThrow(() -> new IllegalStateException("Couldn't find a location for those coordinates"));
   }
 
+  @Override
+  public void sendLocation(Long chatId, LocationName locationName) {
+    SendMessage message = new SendMessage(chatId, locationName.toString());
+    message.setReplyMarkup(keyboardMenu.getForecastReplyMarkup());
+    telegramBotExecutor.execute(message);
+  }
 }

@@ -7,6 +7,7 @@ import dev.korostik.skywatch.dto.weather.external.ForecastRequest;
 import dev.korostik.skywatch.dto.weather.external.ForecastResponse;
 import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
+import dev.korostik.skywatch.enums.Language;
 import dev.korostik.skywatch.enums.OpenWeatherParameters;
 import dev.korostik.skywatch.exception.WeatherProviderException;
 import dev.korostik.skywatch.exception.WeatherServiceException;
@@ -15,6 +16,8 @@ import dev.korostik.skywatch.mapper.custom.HourlyDataMapper;
 import dev.korostik.skywatch.mapper.struct.CurrentWeatherMapper;
 import dev.korostik.skywatch.mapper.struct.DailyWeatherMapper;
 import dev.korostik.skywatch.mapper.struct.HourlyWeatherMapper;
+import dev.korostik.skywatch.service.location.LocationClientService;
+import dev.korostik.skywatch.service.location.LocationService;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +34,8 @@ public class ForecastServiceImpl implements ForecastService {
   private final ForecastApiProviderResolver providerResolver;
   private final WeatherPersistenceService weatherPersistenceService;
   private final WeatherConditionService weatherConditionService;
+  private final LocationService locationService;
+  private final LocationClientService locationClientService;
 
   private final CurrentWeatherMapper currentWeatherMapper;
   private final DailyWeatherMapper dailyWeatherMapper;
@@ -40,14 +45,18 @@ public class ForecastServiceImpl implements ForecastService {
 
   @Override
   @Transactional
-  public WeatherSummary fetchAndSave(Location location, List<OpenWeatherParameters> parameters, int numberOfDays) {
+  public WeatherSummary fetchAndSave(Long locationId, List<OpenWeatherParameters> parameters,
+      Integer numberOfDays, Language language) {
+    Location location = locationService.findById(locationId);
     ProviderResult providerResult = fetchForecastWithFallback(location, parameters, numberOfDays);
     Map<String, WeatherCondition> providerCodes = weatherConditionService.getAllByProvider(providerResult.provider());
-    WeatherSummary weatherSummary = mapForecast(providerResult.response(), location, providerCodes);
+    WeatherSummary weatherSummary = mapForecast(providerResult.response(), location, providerCodes,
+        language);
     return weatherPersistenceService.save(weatherSummary);
   }
 
-  private ProviderResult fetchForecastWithFallback(Location location, List<OpenWeatherParameters> parameters, int numberOfDays) {
+  private ProviderResult fetchForecastWithFallback(Location location,
+      List<OpenWeatherParameters> parameters, Integer numberOfDays) {
     ForecastRequest request = buildRequest(location, parameters, numberOfDays);
     List<ForecastApiClientProxy> providers = providerResolver.getAvailableProviders();
 
@@ -75,7 +84,8 @@ public class ForecastServiceImpl implements ForecastService {
     throw new WeatherServiceException("All weather providers failed", errors);
   }
 
-  private ForecastRequest buildRequest(Location location, List<OpenWeatherParameters> parameters, int numberOfDays) {
+  private ForecastRequest buildRequest(Location location, List<OpenWeatherParameters> parameters,
+      Integer numberOfDays) {
     return ForecastRequest.builder()
         .latitude(location.getLatitude())
         .longitude(location.getLongitude())
@@ -87,7 +97,8 @@ public class ForecastServiceImpl implements ForecastService {
         .build();
   }
 
-  private WeatherSummary mapForecast(ForecastResponse response, Location location, Map<String, WeatherCondition> providerCodes) {
+  private WeatherSummary mapForecast(ForecastResponse response, Location location,
+      Map<String, WeatherCondition> providerCodes, Language language) {
     return WeatherSummary.builder()
         .currentWeather(Optional.ofNullable(response.current())
             .map(current -> currentWeatherMapper.toEntity(current, location, providerCodes))
@@ -98,6 +109,8 @@ public class ForecastServiceImpl implements ForecastService {
         .hourlyWeather(Optional.ofNullable(response.hourly())
             .map(hourly -> hourlyWeatherMapper.toEntities(hourlyDataMapper.toList(hourly), location, providerCodes))
             .orElse(null))
+        .locationName(locationClientService.findOrCreateLocationName(
+            location.getLatitude(), location.getLongitude(), language))
         .build();
   }
 }
