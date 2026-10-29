@@ -3,8 +3,8 @@ package dev.korostik.skywatch.service.weather;
 import dev.korostik.skywatch.client.ForecastApiClientProxy;
 import dev.korostik.skywatch.dto.weather.domain.ProviderResult;
 import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
-import dev.korostik.skywatch.dto.weather.external.ForecastRequest;
-import dev.korostik.skywatch.dto.weather.external.ForecastResponse;
+import dev.korostik.skywatch.dto.weather.external.feignclient.ForecastRequest;
+import dev.korostik.skywatch.dto.weather.external.feignclient.ForecastResponse;
 import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.enums.Language;
@@ -18,6 +18,7 @@ import dev.korostik.skywatch.mapper.struct.DailyWeatherMapper;
 import dev.korostik.skywatch.mapper.struct.HourlyWeatherMapper;
 import dev.korostik.skywatch.service.location.LocationClientService;
 import dev.korostik.skywatch.service.location.LocationService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -64,7 +65,7 @@ public class ForecastServiceImpl implements ForecastService {
       throw new WeatherServiceException("No available weather providers configured", List.of());
     }
 
-    List<WeatherProviderException> errors = new java.util.ArrayList<>();
+    List<WeatherProviderException> errors = new ArrayList<>();
 
     for (ForecastApiClientProxy provider : providers) {
       try {
