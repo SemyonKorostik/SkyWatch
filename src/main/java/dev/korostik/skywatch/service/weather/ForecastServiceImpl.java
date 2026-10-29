@@ -5,6 +5,7 @@ import dev.korostik.skywatch.dto.weather.domain.ProviderResult;
 import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
 import dev.korostik.skywatch.dto.weather.external.feignclient.ForecastRequest;
 import dev.korostik.skywatch.dto.weather.external.feignclient.ForecastResponse;
+import dev.korostik.skywatch.dto.weather.external.response.WeatherSummaryDto;
 import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.enums.Language;
@@ -16,6 +17,7 @@ import dev.korostik.skywatch.mapper.custom.HourlyDataMapper;
 import dev.korostik.skywatch.mapper.struct.CurrentWeatherMapper;
 import dev.korostik.skywatch.mapper.struct.DailyWeatherMapper;
 import dev.korostik.skywatch.mapper.struct.HourlyWeatherMapper;
+import dev.korostik.skywatch.mapper.struct.WeatherSummaryMapper;
 import dev.korostik.skywatch.service.location.LocationClientService;
 import dev.korostik.skywatch.service.location.LocationService;
 import java.util.ArrayList;
@@ -43,17 +45,19 @@ public class ForecastServiceImpl implements ForecastService {
   private final DailyDataMapper dailyDataMapper;
   private final HourlyDataMapper hourlyDataMapper;
   private final HourlyWeatherMapper hourlyWeatherMapper;
+  private final WeatherSummaryMapper weatherSummaryMapper;
 
   @Override
   @Transactional
-  public WeatherSummary fetchAndSave(Long locationId, List<OpenWeatherParameters> parameters,
+  public WeatherSummaryDto fetchAndSave(Long locationId, List<OpenWeatherParameters> parameters,
       Integer numberOfDays, Language language) {
     Location location = locationService.findById(locationId);
     ProviderResult providerResult = fetchForecastWithFallback(location, parameters, numberOfDays);
     Map<String, WeatherCondition> providerCodes = weatherConditionService.getAllByProvider(providerResult.provider());
     WeatherSummary weatherSummary = mapForecast(providerResult.response(), location, providerCodes,
         language);
-    return weatherPersistenceService.save(weatherSummary);
+    WeatherSummary savedSummary = weatherPersistenceService.save(weatherSummary);
+    return weatherSummaryMapper.toDto(savedSummary);
   }
 
   private ProviderResult fetchForecastWithFallback(Location location,
