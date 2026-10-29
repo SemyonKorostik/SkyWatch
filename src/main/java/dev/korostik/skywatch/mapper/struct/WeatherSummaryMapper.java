@@ -24,9 +24,13 @@ public interface WeatherSummaryMapper {
 
   WeatherSummaryMapper INSTANCE = Mappers.getMapper(WeatherSummaryMapper.class);
 
+  @Mapping(target = "current", source = "currentWeather")
+  @Mapping(target = "daily", source = "dailyWeather")
+  @Mapping(target = "hourly", source = "hourlyWeather")
+  @Mapping(target = "locationName", source = "locationName")
   WeatherSummaryDto toDto(WeatherSummary summary);
 
-  @Mapping(target = "weatherCondition", source = "weatherCondition")
+  @Mapping(target = "weatherConditionDto", source = "weatherCondition")
   @Mapping(target = "temperature", source = "temperature")
   @Mapping(target = "windSpeed", source = "windSpeed")
   @Mapping(target = "windDirection", source = "windDirection")
