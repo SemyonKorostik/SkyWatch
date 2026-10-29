@@ -26,14 +26,16 @@ public interface WeatherSummaryMapper {
 
   WeatherSummaryDto toDto(WeatherSummary summary);
 
-  @Mapping(target = "weatherConditionDto", source = "weatherCondition")
+  @Mapping(target = "weatherCondition", source = "weatherCondition")
   @Mapping(target = "temperature", source = "temperature")
   @Mapping(target = "windSpeed", source = "windSpeed")
   @Mapping(target = "windDirection", source = "windDirection")
   @Mapping(target = "humidity", source = "humidity")
   @Mapping(target = "pressure", source = "pressure")
+  @Mapping(target = "updatedAt", source = "updatedAt")
   CurrentWeatherDto toDto(CurrentWeather entity);
 
+  @Mapping(target = "date", source = "id.date")
   @Mapping(target = "weatherConditionDto", source = "weatherCondition")
   @Mapping(target = "temperatureMax", source = "temperatureMax")
   @Mapping(target = "temperatureMin", source = "temperatureMin")
@@ -42,6 +44,7 @@ public interface WeatherSummaryMapper {
   @Mapping(target = "humidity", source = "humidity")
   DailyForecastDto toDto(DailyWeather entity);
 
+  @Mapping(target = "time", source = "id.time")
   @Mapping(target = "weatherConditionDto", source = "weatherCondition")
   @Mapping(target = "temperature", source = "temperature")
   @Mapping(target = "windSpeed", source = "windSpeed")
@@ -54,6 +57,7 @@ public interface WeatherSummaryMapper {
 
   @Mapping(target = "country", source = "country")
   @Mapping(target = "placeName", source = "placeName")
+  @Mapping(target = "timeZoneId", source = "location.timeZoneId")
   LocationNameDto toDto(LocationName entity);
 
   @Mapping(target = "wmoCode", source = "wmoCode")
