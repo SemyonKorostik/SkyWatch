@@ -1,12 +1,12 @@
 package dev.korostik.skywatch.service.weather;
 
 import com.pengrad.telegrambot.request.SendMessage;
-import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
-import dev.korostik.skywatch.entities.reference.WeatherCondition;
-import dev.korostik.skywatch.entities.reference.WmoWeatherCode;
-import dev.korostik.skywatch.entities.weather.CurrentWeather;
-import dev.korostik.skywatch.entities.weather.DailyWeather;
-import dev.korostik.skywatch.entities.weather.HourlyWeather;
+import dev.korostik.skywatch.dto.weather.external.response.CurrentWeatherDto;
+import dev.korostik.skywatch.dto.weather.external.response.DailyForecastDto;
+import dev.korostik.skywatch.dto.weather.external.response.HourlyForecastDto;
+import dev.korostik.skywatch.dto.weather.external.response.WeatherConditionDto;
+import dev.korostik.skywatch.dto.weather.external.response.WeatherSummaryDto;
+import dev.korostik.skywatch.dto.weather.external.response.WmoWeatherCodeDto;
 import dev.korostik.skywatch.enums.Language;
 import dev.korostik.skywatch.enums.OpenWeatherParameters;
 import dev.korostik.skywatch.telegram.chat.template.ChatTemplates;
@@ -33,37 +33,34 @@ public class ForecastClientServiceImpl implements ForecastClientService {
 
   @Override
   public void sendCurrentWeather(Long chatId, Long locationId, Language language) {
-    WeatherSummary weatherSummary = forecastService.fetchAndSave(locationId,
+    WeatherSummaryDto weatherSummaryDto = forecastService.fetchAndSave(locationId,
         List.of(OpenWeatherParameters.CURRENT), null, language);
 
-    CurrentWeather current = weatherSummary.getCurrentWeather();
+    CurrentWeatherDto current = weatherSummaryDto.current();
 
-    WeatherCondition condition = current.getWeatherCondition();
-    WmoWeatherCode wmoCode = condition != null ? condition.getWmoCode() : null;
-    String icon = wmoCode != null ? wmoCode.getEmoji() : "❓";
-    String conditionText = wmoCode != null ? wmoCode.getDescription() : "Unknown";
-
-    ZoneId zoneId = weatherSummary.getLocationName().getLocation().getTimeZoneId();
+    WeatherConditionDto condition = current.weatherCondition();
+    WmoWeatherCodeDto wmoCode = condition != null ? condition.wmoCode() : null;
+    String icon = wmoCode != null ? wmoCode.emoji() : "❓";
+    String conditionText = wmoCode != null ? wmoCode.description() : "Unknown";
+    String windDir = degreesToCompass(current.windDirection());
+    Double windSpeedKmh = current.windSpeed() != null ? current.windSpeed() * 3.6 : 0.0;
+    ZoneId zoneId = weatherSummaryDto.locationName().timeZoneId();
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm").withZone(zoneId);
     String updatedTime =
-        current.getUpdatedAt() != null ? timeFormatter.format(current.getUpdatedAt()) : "N/A";
-
-    String windDir = degreesToCompass(current.getWindDirection());
-    Double windSpeedKmh = current.getWindSpeed() != null ? current.getWindSpeed() * 3.6 : 0.0;
-
+        current.updatedAt() != null ? timeFormatter.format(current.updatedAt()) : "N/A";
     String locationParam =
-        weatherSummary.getLocationName().getPlaceName() + ", " + weatherSummary.getLocationName()
-            .getCountry();
+        weatherSummaryDto.locationName().placeName() + ", " + weatherSummaryDto.locationName()
+            .country();
 
     Map<String, String> values = Map.ofEntries(
         Map.entry("location", locationParam),
         Map.entry("icon", icon),
-        Map.entry("temp", formatDouble(current.getTemperature())),
+        Map.entry("temp", formatDouble(current.temperature())),
         Map.entry("condition", conditionText),
-        Map.entry("humidity", formatInt(current.getHumidity())),
+        Map.entry("humidity", formatInt(current.humidity())),
         Map.entry("windSpeed", String.format(Locale.US, "%.1f", windSpeedKmh)),
         Map.entry("windDir", windDir),
-        Map.entry("pressure", formatDouble(current.getPressure())),
+        Map.entry("pressure", formatDouble(current.pressure())),
         Map.entry("time", updatedTime)
     );
 
@@ -75,29 +72,30 @@ public class ForecastClientServiceImpl implements ForecastClientService {
 
   @Override
   public void sendHourlyForecast(Long chatId, Long locationId, Language language) {
-    WeatherSummary weatherSummary = forecastService.fetchAndSave(locationId,
+    WeatherSummaryDto weatherSummaryDto = forecastService.fetchAndSave(locationId,
         List.of(OpenWeatherParameters.CURRENT, OpenWeatherParameters.HOURLY), 2, language);
 
-    List<HourlyWeather> hourlyList = weatherSummary.getHourlyWeather();
+    List<HourlyForecastDto> hourlyList = weatherSummaryDto.hourly();
 
-    ZoneId zoneId = weatherSummary.getLocationName().getLocation().getTimeZoneId();
+    ZoneId zoneId = weatherSummaryDto.locationName().timeZoneId();
     DateTimeFormatter hourFormatter = DateTimeFormatter.ofPattern("HH:mm").withZone(zoneId);
-    String updatedTime = weatherSummary.getCurrentWeather() != null
-        && weatherSummary.getCurrentWeather().getUpdatedAt() != null
-        ? hourFormatter.format(weatherSummary.getCurrentWeather().getUpdatedAt())
+    String updatedTime = weatherSummaryDto.current() != null
+        && weatherSummaryDto.current().updatedAt() != null
+        ? hourFormatter.format(weatherSummaryDto.current().updatedAt())
         : "N/A";
 
     Instant now = Instant.now();
     String hourlyRows = hourlyList.stream()
-        .filter(hw -> hw.getId().getTime().isAfter(now.minusSeconds(1)))
+        .filter(hw -> hw.time().isAfter(now.minusSeconds(1)))
         .limit(24)
         .map(hw -> formatHourlyRow(hw, hourFormatter))
         .collect(Collectors.joining("\n"));
 
     Map<String, String> values = Map.of(
         "location",
-        weatherSummary.getLocationName().getPlaceName() + ", " + weatherSummary.getLocationName()
-            .getCountry(),
+        weatherSummaryDto.locationName().placeName() + ", "
+            + weatherSummaryDto.locationName()
+            .country(),
         "hourlyRows", hourlyRows.isEmpty() ? "No data" : hourlyRows,
         "time", updatedTime
     );
@@ -125,21 +123,21 @@ public class ForecastClientServiceImpl implements ForecastClientService {
   }
 
   private String renderDailyForecast(Long locationId, Language language, int days) {
-    WeatherSummary weatherSummary = forecastService.fetchAndSave(locationId,
+    WeatherSummaryDto weatherSummaryDto = forecastService.fetchAndSave(locationId,
         List.of(OpenWeatherParameters.CURRENT, OpenWeatherParameters.DAILY), days, language);
 
-    List<DailyWeather> dailyList = weatherSummary.getDailyWeather();
+    List<DailyForecastDto> dailyList = weatherSummaryDto.daily();
     if (dailyList == null || dailyList.isEmpty()) {
       return "Daily forecast unavailable";
     }
 
-    ZoneId zoneId = weatherSummary.getLocationName().getLocation().getTimeZoneId();
+    ZoneId zoneId = weatherSummaryDto.locationName().timeZoneId();
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM").withZone(zoneId);
     DateTimeFormatter dayNameFormatter = DateTimeFormatter.ofPattern("EEEE").withZone(zoneId);
-    String updatedTime = weatherSummary.getCurrentWeather() != null
-        && weatherSummary.getCurrentWeather().getUpdatedAt() != null
+    String updatedTime = weatherSummaryDto.current() != null
+        && weatherSummaryDto.current().updatedAt() != null
         ? DateTimeFormatter.ofPattern("HH:mm").withZone(zoneId)
-        .format(weatherSummary.getCurrentWeather().getUpdatedAt())
+        .format(weatherSummaryDto.current().updatedAt())
         : "N/A";
 
     String dailyRows = dailyList.stream()
@@ -149,8 +147,8 @@ public class ForecastClientServiceImpl implements ForecastClientService {
 
     Map<String, String> values = Map.of(
         "location",
-        weatherSummary.getLocationName().getPlaceName() + ", " + weatherSummary.getLocationName()
-            .getCountry(),
+        weatherSummaryDto.locationName().placeName() + ", " + weatherSummaryDto.locationName()
+            .country(),
         "days", String.valueOf(days),
         "dailyRows", dailyRows.isEmpty() ? "No data" : dailyRows,
         "time", updatedTime
@@ -159,15 +157,15 @@ public class ForecastClientServiceImpl implements ForecastClientService {
     return TemplateEngine.render(ChatTemplates.DAILY_WEATHER_TEMPLATE, values);
   }
 
-  private String formatHourlyRow(HourlyWeather hw, DateTimeFormatter timeFormatter) {
-    Instant timeInstant = hw.getId().getTime();
+  private String formatHourlyRow(HourlyForecastDto hw, DateTimeFormatter timeFormatter) {
+    Instant timeInstant = hw.time();
     String timeStr = timeFormatter.format(timeInstant);
 
-    WmoWeatherCode wmoCode = getWmoCode(hw.getWeatherCondition());
-    String icon = wmoCode != null ? wmoCode.getEmoji() : "❓";
-    String tempStr = formatDouble(hw.getTemperature());
-    String precipStr = formatInt(hw.getPrecipitationProbability());
-    Double windSpeedKmh = hw.getWindSpeed() != null ? hw.getWindSpeed() * 3.6 : 0.0;
+    WmoWeatherCodeDto wmoCode = getWmoCode(hw.weatherCondition());
+    String icon = wmoCode != null ? wmoCode.emoji() : "❓";
+    String tempStr = formatDouble(hw.temperature());
+    String precipStr = formatInt(hw.precipitationProbability());
+    Double windSpeedKmh = hw.windSpeed() != null ? hw.windSpeed() * 3.6 : 0.0;
     String windStr = String.format(Locale.US, "%.1f", windSpeedKmh);
 
     return TemplateEngine.render(ChatTemplates.HOURLY_WEATHER_ROW_TEMPLATE, Map.of(
@@ -179,23 +177,23 @@ public class ForecastClientServiceImpl implements ForecastClientService {
     ));
   }
 
-  private String formatDailyRow(DailyWeather dw, DateTimeFormatter dateFormatter,
+  private String formatDailyRow(DailyForecastDto dw, DateTimeFormatter dateFormatter,
       DateTimeFormatter dayNameFormatter) {
-    Instant dateInstant = dw.getId().getDate();
+    Instant dateInstant = dw.date();
     String dateStr = dateFormatter.format(dateInstant);
     String dayNameStr = dayNameFormatter.format(dateInstant);
 
-    WmoWeatherCode wmoCode = getWmoCode(dw.getWeatherCondition());
-    String icon = wmoCode != null ? wmoCode.getEmoji() : "❓";
-    String conditionText = wmoCode != null ? wmoCode.getDescription() : "Unknown";
+    WmoWeatherCodeDto wmoCode = getWmoCode(dw.weatherCondition());
+    String icon = wmoCode != null ? wmoCode.emoji() : "❓";
+    String conditionText = wmoCode != null ? wmoCode.description() : "Unknown";
 
-    String tempMaxStr = formatDouble(dw.getTemperatureMax());
-    String tempMinStr = formatDouble(dw.getTemperatureMin());
+    String tempMaxStr = formatDouble(dw.temperatureMax());
+    String tempMinStr = formatDouble(dw.temperatureMin());
 
     // DailyWeather entity lacks precipitation fields. Using humidity as fallback for {precip}% placeholder.
-    String precipStr = formatInt(dw.getHumidity());
+    String precipStr = formatInt(dw.humidity());
 
-    Double windSpeedKmh = dw.getWindSpeed() != null ? dw.getWindSpeed() * 3.6 : 0.0;
+    Double windSpeedKmh = dw.windSpeed() != null ? dw.windSpeed() * 3.6 : 0.0;
     String windStr = String.format(Locale.US, "%.1f", windSpeedKmh);
 
     return TemplateEngine.render(ChatTemplates.DAILY_WEATHER_ROW_TEMPLATE, Map.of(
@@ -210,8 +208,8 @@ public class ForecastClientServiceImpl implements ForecastClientService {
     ));
   }
 
-  private WmoWeatherCode getWmoCode(WeatherCondition condition) {
-    return condition != null ? condition.getWmoCode() : null;
+  private WmoWeatherCodeDto getWmoCode(WeatherConditionDto condition) {
+    return condition != null ? condition.wmoCode() : null;
   }
 
   private String formatDouble(Double value) {

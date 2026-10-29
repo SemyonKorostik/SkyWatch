@@ -1,6 +1,6 @@
 package dev.korostik.skywatch.mapper.custom;
 
-import dev.korostik.skywatch.dto.weather.external.DailyDataDto;
+import dev.korostik.skywatch.dto.weather.external.feignclient.DailyDataDto;
 import dev.korostik.skywatch.dto.weather.transit.DailyData;
 import java.util.List;
 import java.util.stream.IntStream;

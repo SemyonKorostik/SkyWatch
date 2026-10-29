@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import dev.korostik.skywatch.dto.weather.external.DailyDataDto;
+import dev.korostik.skywatch.dto.weather.external.feignclient.DailyDataDto;
 import dev.korostik.skywatch.dto.weather.transit.DailyData;
 import dev.korostik.skywatch.mapper.MapperTestBase;
 import java.time.LocalDate;

@@ -1,6 +1,6 @@
 package dev.korostik.skywatch.mapper.struct;
 
-import dev.korostik.skywatch.dto.weather.external.CurrentDataDto;
+import dev.korostik.skywatch.dto.weather.external.feignclient.CurrentDataDto;
 import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.entities.weather.CurrentWeather;

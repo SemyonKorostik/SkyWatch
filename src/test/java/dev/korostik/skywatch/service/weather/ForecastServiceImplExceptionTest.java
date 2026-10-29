@@ -3,7 +3,7 @@ package dev.korostik.skywatch.service.weather;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import dev.korostik.skywatch.client.ForecastApiClientProxy;
-import dev.korostik.skywatch.dto.weather.external.ForecastResponse;
+import dev.korostik.skywatch.dto.weather.external.feignclient.ForecastResponse;
 import dev.korostik.skywatch.entities.location.Location;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.enums.ForecastApiProvider;

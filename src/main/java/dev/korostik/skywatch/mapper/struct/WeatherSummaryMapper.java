@@ -1,13 +1,13 @@
 package dev.korostik.skywatch.mapper.struct;
 
 import dev.korostik.skywatch.dto.location.LocationNameDto;
+import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
 import dev.korostik.skywatch.dto.weather.external.response.CurrentWeatherDto;
 import dev.korostik.skywatch.dto.weather.external.response.DailyForecastDto;
 import dev.korostik.skywatch.dto.weather.external.response.HourlyForecastDto;
 import dev.korostik.skywatch.dto.weather.external.response.WeatherConditionDto;
 import dev.korostik.skywatch.dto.weather.external.response.WeatherSummaryDto;
 import dev.korostik.skywatch.dto.weather.external.response.WmoWeatherCodeDto;
-import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
 import dev.korostik.skywatch.entities.location.LocationName;
 import dev.korostik.skywatch.entities.reference.WeatherCondition;
 import dev.korostik.skywatch.entities.reference.WmoWeatherCode;
@@ -30,7 +30,7 @@ public interface WeatherSummaryMapper {
   @Mapping(target = "locationName", source = "locationName")
   WeatherSummaryDto toDto(WeatherSummary summary);
 
-  @Mapping(target = "weatherConditionDto", source = "weatherCondition")
+  @Mapping(target = "weatherCondition", source = "weatherCondition")
   @Mapping(target = "temperature", source = "temperature")
   @Mapping(target = "windSpeed", source = "windSpeed")
   @Mapping(target = "windDirection", source = "windDirection")
@@ -40,7 +40,7 @@ public interface WeatherSummaryMapper {
   CurrentWeatherDto toDto(CurrentWeather entity);
 
   @Mapping(target = "date", source = "id.date")
-  @Mapping(target = "weatherConditionDto", source = "weatherCondition")
+  @Mapping(target = "weatherCondition", source = "weatherCondition")
   @Mapping(target = "temperatureMax", source = "temperatureMax")
   @Mapping(target = "temperatureMin", source = "temperatureMin")
   @Mapping(target = "windSpeed", source = "windSpeed")
@@ -49,7 +49,7 @@ public interface WeatherSummaryMapper {
   DailyForecastDto toDto(DailyWeather entity);
 
   @Mapping(target = "time", source = "id.time")
-  @Mapping(target = "weatherConditionDto", source = "weatherCondition")
+  @Mapping(target = "weatherCondition", source = "weatherCondition")
   @Mapping(target = "temperature", source = "temperature")
   @Mapping(target = "windSpeed", source = "windSpeed")
   @Mapping(target = "humidity", source = "humidity")

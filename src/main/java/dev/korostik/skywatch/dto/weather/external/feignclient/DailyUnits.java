@@ -1,4 +1,4 @@
-package dev.korostik.skywatch.dto.weather.external;
+package dev.korostik.skywatch.dto.weather.external.feignclient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;

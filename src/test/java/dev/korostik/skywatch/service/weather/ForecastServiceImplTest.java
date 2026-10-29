@@ -4,11 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import dev.korostik.skywatch.client.ForecastApiClientProxy;
 import dev.korostik.skywatch.dto.weather.domain.WeatherSummary;
-import dev.korostik.skywatch.dto.weather.external.CurrentDataDto;
-import dev.korostik.skywatch.dto.weather.external.DailyDataDto;
-import dev.korostik.skywatch.dto.weather.external.ForecastRequest;
-import dev.korostik.skywatch.dto.weather.external.ForecastResponse;
-import dev.korostik.skywatch.dto.weather.external.HourlyDataDto;
+import dev.korostik.skywatch.dto.weather.external.feignclient.CurrentDataDto;
+import dev.korostik.skywatch.dto.weather.external.feignclient.DailyDataDto;
+import dev.korostik.skywatch.dto.weather.external.feignclient.ForecastRequest;
+import dev.korostik.skywatch.dto.weather.external.feignclient.ForecastResponse;
+import dev.korostik.skywatch.dto.weather.external.feignclient.HourlyDataDto;
 import dev.korostik.skywatch.dto.weather.transit.DailyData;
 import dev.korostik.skywatch.dto.weather.transit.HourlyData;
 import dev.korostik.skywatch.entities.location.Location;
